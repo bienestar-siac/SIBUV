@@ -87,9 +87,9 @@ export default function LoginPage() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: 'calc(100vh - (100px + 10vh))',
-                // '@media (max-width: 600px)': {
-                //     height: 'calc(100vh - (60px + 10vh))',
-                // }
+                '@media (max-width: 600px)': {
+                    height: 'calc(100vh - (120px + 10vh))',
+                }
             }} 
         >
           <Paper 
