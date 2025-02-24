@@ -1,0 +1,26 @@
+{
+  "name": "administrador-procesos-vbu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "react": "^19.0.0",
+    "vite": "^6.1.1"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.2.0"
+  }
+}
