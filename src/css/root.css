@@ -31,6 +31,13 @@ figure {
     margin-inline-end: unset;
 }
 
+.contGoogle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .loader {
     color: #ffffff;
     font-size: 45px;
