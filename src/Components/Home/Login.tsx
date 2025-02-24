@@ -108,6 +108,11 @@ export default function LoginPage() {
                   variant="outlined"
                   fullWidth
                   value={email}
+                  sx={{ 
+                     'input': {
+                        padding: '25px'
+                     }
+                  }}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
@@ -116,6 +121,11 @@ export default function LoginPage() {
                   variant="outlined"
                   fullWidth
                   value={password}
+                  sx={{ 
+                    'input': {
+                       padding: '25px'
+                    }
+                 }}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <Button
