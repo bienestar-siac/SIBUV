@@ -1,6 +1,7 @@
 
+// Components
+import { Login }  from '../../Components/Home/export'
+
 export default function Home() {
-    return (
-        <h1>Hola34</h1>
-    )
+    return (<Login />)
 }

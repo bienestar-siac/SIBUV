@@ -1,0 +1,67 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;1,200;1,500&display=swap');
+
+* {
+    box-sizing: border-box !important;
+    font-family: 'Josefin Sans', sans-serif !important;
+}
+
+h1 , h2 , h3, h4 , 
+p, li , strong {
+    line-height: 1;
+}
+
+html,
+body {
+    background: var(--white);
+    padding: unset;
+    margin: unset;
+}
+
+img {
+    object-fit: contain;
+    overflow: hidden;
+    user-select: none;
+}
+
+figure {
+    margin-block-start: unset;
+    margin-block-end: unset;
+    margin-inline-start: unset;
+    margin-inline-end: unset;
+}
+
+
+/* VarCss */
+:root {
+    --theme-primary: #191827;
+    --black-secundary: #222;
+    --primary-color: #803ca1;
+    --white: #fff;
+    --theme-secundary: rgba(255,0,92,1);
+    --bg-primary: #4a3057;
+    --red-univalle: hwb(358.61deg 8.63% 23.53%);
+}
+
+/*
+ * Scrollbar General
+*/
+::-webkit-scrollbar {
+    display: initial;
+    width: auto;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #d6dee1;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a8bbbf;
+}

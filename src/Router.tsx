@@ -6,6 +6,9 @@ import { Suspense, Fragment } from "react";
 import routes from "./router/Router";
 import Loader from "./Components/Loarder/Loarder.tsx";
 
+// Styles
+import "./css/root.css"
+
 /**
  * Router
 */
