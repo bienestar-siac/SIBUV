@@ -110,7 +110,7 @@ export default function LoginPage() {
                   value={email}
                   sx={{ 
                      'input': {
-                        padding: '25px'
+                        padding: '24px'
                      }
                   }}
                   onChange={(e) => setEmail(e.target.value)}
@@ -123,7 +123,7 @@ export default function LoginPage() {
                   value={password}
                   sx={{ 
                     'input': {
-                       padding: '25px'
+                       padding: '24px'
                     }
                  }}
                   onChange={(e) => setPassword(e.target.value)}
