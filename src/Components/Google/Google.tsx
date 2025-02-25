@@ -15,6 +15,10 @@ import Cookies from 'js-cookie';
 // Components
 import Show from '../Show/Show'
 
+
+// Fecth
+//import { isUserRegistered } from '../../services/accounts/login'
+
 const _get_auth = (loader, data, setOpen, setErrorText) => {
     try {
         google.accounts.id.initialize({

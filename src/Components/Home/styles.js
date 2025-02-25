@@ -49,5 +49,34 @@ export default {
         '@media (max-width: 600px)': {
             height: 'calc(100vh - (120px + 10vh))',
         }
+    },
+    recLeft: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "35vw",
+        height: "10vh",
+        bgcolor: "#ec1c24",
+        clipPath: "polygon(0% 0%, 100% 0%, 90% 100%, 0% 100%)",
+    },
+    recRight: {
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: "35vw",
+        height: "10vh",
+        bgcolor: "#ec1c24",
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 10% 100%)",
+    },
+    contRec: {
+        position: 'relative',
+        height: "10vh",
+        width: '100%'
+    },
+    contPaper: {
+        p: '40px', 
+        borderRadius: 2, 
+        width: '95%',
+        maxWidth: '350px'
     }
 }
