@@ -78,5 +78,10 @@ export default {
         borderRadius: 2, 
         width: '95%',
         maxWidth: '350px'
+    },
+    btnLogin: {
+        py: 1,
+        background: '#ec1c24',
+        fontSize: "1rem",
     }
 }

@@ -1,23 +1,19 @@
 // React
 import React, { useEffect } from 'react';
 import { decodeToken } from 'react-jwt';
+import { useNavigate } from "react-router";
 
 // Material IU
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Snackbar from '@mui/material/Snackbar';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-// Libs
-import CryptoJS from 'crypto-js';
-import Cookies from 'js-cookie';
 
 // Components
 import Show from '../Show/Show'
-
+import AlertMenssage from '../Alerts/Alert'
 
 // Fecth
-//import { isUserRegistered } from '../../services/accounts/login'
+import { getDataSheet } from '../../services/accounts/login'
+import { decryptData } from '../../services/utils/utils'
+import { setEncryptedCookie } from '../../services/cookie/cookie'
 
 const _get_auth = (loader, data, setOpen, setErrorText) => {
     try {
@@ -44,10 +40,30 @@ const have_permission = ({ data, dataToken }) => {
 const handleCredentialResponse = async (response, loader, data, setOpen, setErrorText) => {
     loader(true);
     try {
-        const decodedToken = decodeToken(response.credential);        
-        console.log(decodedToken)
+        const navigate = useNavigate();
+        const decodedToken   = decodeToken(response.credential);
+        const dataEmails     = await getDataSheet({sheet_name: "Accesos"})
+        const avaibleAccount = await decryptData(String(dataEmails?.data))
+        const findUser = JSON.parse(avaibleAccount || [])?.find((item) => item?.correo === decodedToken?.email)
+
+        if (findUser) {
+            setEncryptedCookie('session_vbu', {
+                email: decodedToken?.email,
+                id: findUser?.id,
+                img: decodedToken?.foto,
+                rol: findUser?.rol,
+                name: findUser?.name
+            })
+            navigate('/modules')
+        } else {
+            setOpen(true)
+            setErrorText('No tienes Acceso al sistema')
+        }
+
     } catch (error) {
         console.log('error', error);
+        setOpen(true)
+        setErrorText('Ha ocurrido un error')
     }
 
     setTimeout(() => {
@@ -60,10 +76,6 @@ export default () => {
     const [open, setOpen] = React.useState(false)
     const [data, setData] = React.useState([])
     const [errorText, setErrorText] = React.useState('No Tienes Acceso')
-
-    const handleClose = () => {
-        setOpen(false)
-    }
 
     useEffect(() => {
         if (isload) return
@@ -97,17 +109,7 @@ export default () => {
             <Show when={!isload}>
                 <div className="contGoogle" id="buttonDiv" />
             </Show>
-            <Box sx={{ width: 500 }}>
-                <Snackbar
-                    autoHideDuration={6000}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                    open={open}
-                    onClose={handleClose}
-                    key={2}
-                >
-                   <Alert severity="error">{errorText}</Alert> 
-                </Snackbar>
-            </Box>
+            <AlertMenssage {...{setOpen,open,errorText, typeLabel: 'error'}} />
         </>
     )
 };
