@@ -6,7 +6,7 @@ const NoFound = lazy(() => import("../pages/404.tsx"));
 const Modules = lazy(() => import("../pages/Modules/index.tsx"));
 
 export default [
-  { path: "/", element: <Home /> },
-  { path: '/modules', element: <Modules />},
-  { path: "*", element: <NoFound /> },
+  { path: "/", element: <Home />, isAuth: false },
+  { path: '/modules', element: <Modules />, isAuth: true},
+  { path: "*", element: <NoFound />, isAuth: false },
 ];

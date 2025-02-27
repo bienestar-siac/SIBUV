@@ -14,6 +14,12 @@ import AlertMenssage from '../../Alerts/Alert'
 // Fecth
 import { isUserRegistered } from '../../../services/accounts/login'
 
+// Hooks
+import { setEncryptedCookie } from '../../../services/cookie/cookie'
+import { dataUser } from '../../../hooks/accounts/accounts'
+import { useDispatch } from "react-redux";
+import { setSession } from "../../../hooks/store"; 
+
 // Styles
 import styles from '../styles'
 
@@ -29,7 +35,8 @@ export default function Form() {
 
     // Navigate
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         let isLoad = false
@@ -51,6 +58,17 @@ export default function Form() {
         })
         
         if (response?.isAuth) {
+            const user = await dataUser(email)
+            console.log(user,"AJMM",email)
+            const data = {
+                email: email,
+                id: user?.id,
+                img: null,
+                rol: user?.rol,
+                name: user?.name
+            }
+            setEncryptedCookie('session_vbu', data)
+            dispatch(setSession({ isAuth: true, user: data }));
             navigate('/modules')
         }
 
@@ -95,7 +113,7 @@ export default function Form() {
                         />
 
                         <Show when={isload}>
-                            <LoadingButton sx={styles.btnLogin} loading variant="outlined" sx={{width: '100%'}}>
+                            <LoadingButton sx={{ ...styles.btnLogin, width: '100%'}} loading variant="outlined">
                                 Submit
                             </LoadingButton>
                         </Show>

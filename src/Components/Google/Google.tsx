@@ -15,11 +15,15 @@ import { getDataSheet } from '../../services/accounts/login'
 import { decryptData } from '../../services/utils/utils'
 import { setEncryptedCookie } from '../../services/cookie/cookie'
 
-const _get_auth = (loader, data, setOpen, setErrorText) => {
+// Hooks
+import { useDispatch } from "react-redux";
+import { setSession } from "../../hooks/store"; 
+
+const _get_auth = (loader, data, setOpen, setErrorText, navigate, dispatch) => {
     try {
         google.accounts.id.initialize({
             client_id: import.meta.env.VITE_CLIEN_ID_GOOGLE,
-            callback: (response) => handleCredentialResponse(response, loader, data, setOpen, setErrorText),
+            callback: (response) => handleCredentialResponse(response, loader, data, setOpen, setErrorText, navigate, dispatch ),
         });
 
         google.accounts.id.renderButton(
@@ -33,27 +37,24 @@ const _get_auth = (loader, data, setOpen, setErrorText) => {
     }
 };
 
-const have_permission = ({ data, dataToken }) => {
-
-};
-
-const handleCredentialResponse = async (response, loader, data, setOpen, setErrorText) => {
+const handleCredentialResponse = async (response, loader, data, setOpen, setErrorText, navigate, dispatch ) => {
     loader(true);
     try {
-        const navigate = useNavigate();
         const decodedToken   = decodeToken(response.credential);
         const dataEmails     = await getDataSheet({sheet_name: "Accesos"})
         const avaibleAccount = await decryptData(String(dataEmails?.data))
         const findUser = JSON.parse(avaibleAccount || [])?.find((item) => item?.correo === decodedToken?.email)
-
+        console.log(decodedToken)
         if (findUser) {
-            setEncryptedCookie('session_vbu', {
+            const data = {
                 email: decodedToken?.email,
                 id: findUser?.id,
-                img: decodedToken?.foto,
+                img: decodedToken?.picture,
                 rol: findUser?.rol,
                 name: findUser?.name
-            })
+            }
+            setEncryptedCookie('session_vbu', data)
+            dispatch(setSession({ isAuth: true, user: data }));
             navigate('/modules')
         } else {
             setOpen(true)
@@ -72,6 +73,9 @@ const handleCredentialResponse = async (response, loader, data, setOpen, setErro
 };
 
 export default () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [isload, setIsLoad] =  React.useState(false)
     const [open, setOpen] = React.useState(false)
     const [data, setData] = React.useState([])
@@ -94,7 +98,7 @@ export default () => {
         _root.appendChild(_script, _root);
 
         _script.onload = () => {
-            _get_auth(setIsLoad, data, setOpen, setErrorText);
+            _get_auth(setIsLoad, data, setOpen, setErrorText,navigate,dispatch);
         };
 
     }, [isload]);
