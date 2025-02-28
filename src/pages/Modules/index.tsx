@@ -18,7 +18,7 @@ export default function Modules() {
                     display: 'flex',
                     flexDirection: 'column',
                     background: '#f5f5f5',
-                    minHeight: '100vh',
+                    minHeight: 'calc(100vh - 70px)',
                     marginTop: '70px'
                 }}
             >
