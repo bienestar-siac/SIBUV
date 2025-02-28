@@ -14,6 +14,7 @@ import {
     useTheme,
 } from "@mui/material"
 import { AccountCircle } from "@mui/icons-material"
+import CardMedia from '@mui/material/CardMedia';
 
 import modules from './const'
 
@@ -66,7 +67,16 @@ export default function SectionModules() {
                     <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
                       {module.subtitle}
                     </Typography>
-                    <Box sx={{ mt: "auto" }}>IMG</Box>
+                    <Box sx={{ mt: "auto" }}>
+                        <CardMedia
+                            sx={styles.img}
+                            component="img"
+                            height="100%"
+                            widht="100%"
+                            image={module.icon}
+                            alt="Logo"
+                        />
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
