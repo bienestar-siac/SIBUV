@@ -26,7 +26,7 @@ export default function SectionModules() {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   
     return (
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100%", bgcolor: "#f5f5f5" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100%"}}>
   
         {/* Main Content */}
         <Container maxWidth="lg" sx={{ mt: 8, mb: 8, flexGrow: 1 }}>
@@ -41,7 +41,7 @@ export default function SectionModules() {
                   sx={{
                     height: "100%",
                     display: "flex",
-                    flexDirection: "column",
+                    // flexDirection: "column",
                     cursor: "pointer",
                     transition: "transform 0.2s, box-shadow 0.2s",
                     "&:hover": {
