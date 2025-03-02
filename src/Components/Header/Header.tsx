@@ -1,5 +1,5 @@
 // React
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 // Material IU
@@ -15,11 +15,8 @@ import {
     ListItemIcon, 
     Divider 
 } from "@mui/material"
-import { AccountCircle, Logout } from "@mui/icons-material"
+import { AccountCircle } from "@mui/icons-material"
 import CardMedia from '@mui/material/CardMedia';
-
-// Cookie
-import Cookies from "js-cookie";
 
 // Styles
 import styles from './styles'
@@ -29,33 +26,31 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setSession } from "../../hooks/store"; 
 
+// Components
+import LoginMenu from './Menu'
+
+// Hbalders
+import Handlers from './handlers'
+
 /**
  * Header
  */
 export default function Header() {
     const dataUser = useSelector((state) => state.session);
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
     // Navigate
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
 
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+    const handlers = Handlers({    
+      setAnchorEl,
+      dispatch,
+      setSession,
+      navigate
+    })
 
-    const onCloseSession = () => {
-      Cookies.remove("session_token"); 
-      dispatch(setSession({ isAuth: false, user: {} }));
-      navigate('/')
-    }
-
-    console.log(dataUser)
     return (
         <AppBar sx={styles.contPrimary}>
           <Toolbar>
@@ -83,21 +78,10 @@ export default function Header() {
                 </Typography>
               </Box>
             </Box>
-            <IconButton onClick={handleClick} color="inherit" aria-label="user profile">
+            <IconButton onClick={handlers.handleClick} color="inherit" aria-label="user profile">
               <Avatar sx={{ bgcolor: "gray" }} alt={dataUser?.user?.email || 'U'} src={dataUser.user.img}  />
             </IconButton>
-            <Menu anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
-            <Typography sx={styles.titleMenu} variant="caption" component="div">
-              {dataUser?.user?.name}
-            </Typography>
-            <Divider />
-            <MenuItem onClick={onCloseSession}>
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              Cerrar sesión
-            </MenuItem>
-          </Menu>
+            <LoginMenu {...{dataUser, anchorEl, open, handleClose: handlers.handleClose, onCloseSession: handlers.onCloseSession}} />
           </Toolbar>
         </AppBar>
     )

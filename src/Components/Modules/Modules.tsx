@@ -1,3 +1,6 @@
+// React 
+import { useNavigate } from "react-router";
+
 // Material IU
 import {
     AppBar,
@@ -24,49 +27,49 @@ import styles from './styles'
 export default function SectionModules() {
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
-  
+    
+    // Navigate
+    const navigate = useNavigate();
+
+    const handlerActions = (path: string) => {
+      if (path === '#') 
+        return
+      
+      navigate(path)
+    }
+
     return (
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100%"}}>
+      <Box sx={styles.contModulesPrimary}>
   
         {/* Main Content */}
-        <Container maxWidth="lg" sx={{ mt: 8, mb: 8, flexGrow: 1 }}>
+        <Container sx={{ mt: 8, mb: 8, flexGrow: 1, maxWidth: '1400px !important' }}>
           <Typography variant="h2" component="h1" align="center" gutterBottom sx={{ mb: 6, fontWeight: "bold" }}>
             Módulos
           </Typography>
   
           <Grid container spacing={4} justifyContent="center">
             {modules.map((module, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    // flexDirection: "column",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: 3,
-                    },
-                  }}
-                >
+              <Grid onClick={() => handlerActions(module.path)} item xs={12} sm={6} md={4} key={index}>
+                <Card sx={styles.cardModules}>
                   <CardContent sx={styles.contContentTitle}>
-                    <Typography
-                      variant="h5"
-                      component="h2"
-                      gutterBottom
-                      align="center"
-                      sx={{
-                        color: module.color,
-                        fontWeight: "bold",
-                        mb: 2,
-                      }}
-                    >
-                      {module.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-                      {module.subtitle}
-                    </Typography>
+                    <Box sx={styles.contContentModule}>
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        gutterBottom
+                        align="center"
+                        sx={{
+                          color: module.color,
+                          fontWeight: "bold",
+                          mb: 2,
+                        }}
+                      >
+                        {module.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
+                        {module.subtitle}
+                      </Typography>
+                    </Box>
                     <Box sx={{ mt: "auto" }}>
                         <CardMedia
                             sx={styles.img}

@@ -30,12 +30,34 @@ const styles: Styles = {
     contContentTitle: { 
         flexGrow: 1, 
         display: "flex", 
-        flexDirection: "column", 
+        // flexDirection: "column", 
         alignItems: "center",
         p: 3 
     },
     titleMenu: {
         padding: '10px',
+    },
+    cardModules: {
+        height: "100%",
+        display: "flex",
+        // flexDirection: "column",
+        cursor: "pointer",
+        transition: "transform 0.2s, box-shadow 0.2s",
+        "&:hover": {
+          transform: "translateY(-5px)",
+          boxShadow: 3,
+        },
+    },
+    contModulesPrimary: { 
+        display: "flex", 
+        flexDirection: "column", 
+        minHeight: "100%"
+    },
+    contContentModule: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }
 
