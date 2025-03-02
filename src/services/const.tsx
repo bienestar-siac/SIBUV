@@ -3,5 +3,5 @@ type fecthUris = {
 }
 
 export const uri: fecthUris = {
-    baseUrl: 'http://localhost:8000'
+    baseUrl: 'https://backend-bienestar.onrender.com'
 }
