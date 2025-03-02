@@ -1,6 +1,6 @@
 export default {
     contPrimaryLogin: {
-        minHeight: "100vh",
+        minHeight: "100%",
         display: "flex",
         flexDirection: "column",
         position: "relative",
@@ -18,7 +18,7 @@ export default {
         }
     },
     img: {
-        position: 'fixed',
+        position: 'absolute',
         top: 15,
         left: 15,
         width: '130px',
@@ -27,6 +27,13 @@ export default {
             left: 10,
             width: '90px',
             height: '80px',
+            objectFit: 'contain'
+        },
+        '@media (max-width: 900px)  and (orientation: landscape)': {
+            top: 15,
+            left: 15,
+            width: '70px',
+            height: '60px',
             objectFit: 'contain'
         }
     },
@@ -40,15 +47,19 @@ export default {
             maxWidth: '60%',
             lineHeight: 'normal'
         },
+        '@media (max-width: 900px)  and (orientation: landscape)': {
+            fontSize: '23px',
+            maxWidth: '80%',
+        }
     },
     contForm: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - (100px + 10vh))',
-        '@media (max-width: 600px)': {
-            height: 'calc(100vh - (120px + 10vh))',
-        }
+        minHeight: 'calc(100vh - (100px + 10vh))',
+        // '@media (max-width: 600px)': {
+        //     height: 'calc(100vh - (120px + 10vh))',
+        // }
     },
     recLeft: {
         position: "absolute",
