@@ -1,3 +1,6 @@
+// React 
+import { useNavigate } from "react-router";
+
 // Material IU
 import {
     AppBar,
@@ -24,7 +27,17 @@ import styles from './styles'
 export default function SectionModules() {
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
-  
+    
+    // Navigate
+    const navigate = useNavigate();
+
+    const handlerActions = (path: string) => {
+      if (path === '#') 
+        return
+      
+      navigate(path)
+    }
+
     return (
       <Box sx={styles.contModulesPrimary}>
   
@@ -36,7 +49,7 @@ export default function SectionModules() {
   
           <Grid container spacing={4} justifyContent="center">
             {modules.map((module, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid onClick={() => handlerActions(module.path)} item xs={12} sm={6} md={4} key={index}>
                 <Card sx={styles.cardModules}>
                   <CardContent sx={styles.contContentTitle}>
                     <Box sx={styles.contContentModule}>
