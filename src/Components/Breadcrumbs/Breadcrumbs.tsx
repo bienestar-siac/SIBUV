@@ -1,5 +1,6 @@
 // React
 import React from 'react';
+import { useNavigate } from "react-router";
 
 // Materia IU
 import { Breadcrumbs, Link, Typography } from '@mui/material';
@@ -11,6 +12,9 @@ import styles from './styles'
  * Breacumbs
  */
 export default function CustomBreadcrumbs({ paths = [], maxLength = 30 }) {
+  // Navigate
+  const navigate = useNavigate();
+
   const truncateText = (text) => {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + '...';
@@ -22,7 +26,7 @@ export default function CustomBreadcrumbs({ paths = [], maxLength = 30 }) {
     <Breadcrumbs sx={styles.contBreadcrumbs} separator="/" aria-label="breadcrumb">
       {paths.map((path, index) => {
         const isLast = index === paths.length - 1;
-        const displayText = truncateText(path);
+        const displayText = truncateText(path?.value);
 
         if (isLast) {
           return (
@@ -41,6 +45,7 @@ export default function CustomBreadcrumbs({ paths = [], maxLength = 30 }) {
             sx={styles.brecumbsNormal}
             onClick={(e) => {
               e.preventDefault();
+              navigate(path?.path)
             }}
           >
             {displayText}

@@ -28,7 +28,11 @@ export default function Process() {
         <Fragment>
             <Box sx={styles.contPrimary}>
                 <Header />
-                <CustomBreadcrumbs paths={['Inicio', 'Modulos', 'Procesos']} />
+                <CustomBreadcrumbs paths={[
+                    { value: 'Inicio', path: '/'}, 
+                    { value: 'Modulos', path: '/modules'},
+                    { value: 'Procesos', path: '/module/process'}
+                ]} />
                 <Filter />
                 <ProcessModule />
             </Box>
