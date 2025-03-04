@@ -50,7 +50,11 @@ export default function SectionModules() {
           <Grid container spacing={4} justifyContent="center">
             {modules.map((module, index) => (
               <Grid onClick={() => handlerActions(module.path)} item xs={12} sm={6} md={4} key={index}>
-                <Card sx={styles.cardModules}>
+                <Card sx={{
+                    ...styles.cardModules,
+                    opacity: module?.path !== '#'? 1 : 0.4,
+                    cursor: module?.path == '#'? 'not-allowed' : 'pointer',
+                  }}>
                   <CardContent sx={styles.contContentTitle}>
                     <Box sx={styles.contContentModule}>
                       <Typography
@@ -72,7 +76,10 @@ export default function SectionModules() {
                     </Box>
                     <Box sx={{ mt: "auto" }}>
                         <CardMedia
-                            sx={styles.img}
+                            sx={{
+                              ...styles.img,
+                              opacity: module?.path !== '#'? 1 : 0.4,
+                            }}
                             component="img"
                             height="100%"
                             widht="100%"
