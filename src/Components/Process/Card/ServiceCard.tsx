@@ -1,3 +1,6 @@
+// React
+import { useNavigate } from "react-router";
+
 // Interfaces
 import { ServicioCardProps } from '../../../interfaces/interfaces'
 
@@ -25,19 +28,24 @@ import styles from '../styles'
 // Conts
 import { serviciosImg } from '../conts'
 
-export default function ServicioCard ({ titulo, icono, color="#f44336" }: ServicioCardProps) {
+export default function ServicioCard ({ titulo, data, icono, color="#f44336", disabled }: ServicioCardProps) {
     const theme = useTheme()
-  
+    // Navigate
+    const navigate = useNavigate();
+
+    console.log(data,"disabled")
+    const handlerClick = (link) => {
+        if (link !== undefined)
+            navigate(link)
+    }
+
     return (
-      <Card
-        sx={{
-          height: "100%",
-          borderRadius: "16px",
-          border: "1px solid #e0e0e0",
-          boxShadow: "none",
-          position: "relative",
-          overflow: "visible",
-        }}
+      <Card 
+          sx={{
+              ...styles.cardProcess, 
+              opacity: disabled? 0.3 : 1,
+              cursor: disabled? 'not-allowed' : 'pointer',
+          }}
       >
         <CardContent sx={{ p: 3 }}>
           <Typography
@@ -55,56 +63,45 @@ export default function ServicioCard ({ titulo, icono, color="#f44336" }: Servic
             }}
           >
             <List sx={{ p: 0 }}>
-              {[1, 2, 3].map((num) => (
-                <ListItem
-                  key={num}
-                  sx={{
-                    p: 0,
-                    mb: 1,
-                    maxWidth: '65%',
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.04)",
-                      borderRadius: "4px",
-                    },
-                  }}
-                  button
-                  component="a"
-                  href="#"
-                >
-                  <ListItemText
-                    primary={`Acceso Rápido ${num}`}
-                    sx={{
-                      "& .MuiListItemText-primary": {
-                        fontWeight: 500,
-                        color: "#333",
-                        textDecoration: 'underline'
-                      },
-                    }}
-                  />
-                  <ListItemIcon sx={{ minWidth: "auto", ml: 1 }}>
-                    <ChevronRightIcon />
-                  </ListItemIcon>
-                </ListItem>
-              ))}
+              {[1, 2, 3].map((num) => {
+                const link = data[`enlace_${num}`]
+                return (
+                    <ListItem
+                      onClick={() => handlerClick(link)}
+                      key={num}
+                      sx={{
+                        ...styles.listItem,
+                        cursor: (link === undefined || disabled)? 'not-allowed' : 'pointer',
+                        opacity: link !== undefined ? 1 : 0.3
+                      }}
+                      button
+                      component="a"
+                      href="#"
+                    >
+                      <ListItemText
+                        primary={`Acceso Rápido ${num}`}
+                        sx={styles.listItemText}
+                      />
+                      {
+                        link !== undefined &&
+                        <ListItemIcon sx={{ minWidth: "auto", ml: 1 }}>
+                          <ChevronRightIcon />
+                        </ListItemIcon>
+                      }
+                    </ListItem>
+                )
+              })}
             </List>
           </Box>
 
-          <Box
-            sx={{
-              position: "absolute",
-              right: 20,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: color,
-              fontSize: "3rem",
-            }}
-          >
+          <Box sx={styles.cardImg}>
             <CardMedia
                 component="img"
                 height="100%"
                 widht="100%"
                 image={serviciosImg[icono]}
                 alt="Logo"
+                sx={{ opacity: disabled? 0.3 : 1 }}
             />
           </Box>
         </CardContent>

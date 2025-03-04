@@ -4,6 +4,8 @@ import { Fragment, useMemo } from 'react'
 // Components
 import Header from "../../Components/Header/Header"
 import ProcessModule from '../../Components/Process/Process'
+import Filter from '../../Components/Process/Filter/Filter'
+import CustomBreadcrumbs from '../../Components/Breadcrumbs/Breadcrumbs'
 
 // Material IU
 import { Box } from "@mui/material"
@@ -26,6 +28,8 @@ export default function Process() {
         <Fragment>
             <Box sx={styles.contPrimary}>
                 <Header />
+                <CustomBreadcrumbs paths={['Inicio', 'Modulos', 'Procesos']} />
+                <Filter />
                 <ProcessModule />
             </Box>
         </Fragment>
