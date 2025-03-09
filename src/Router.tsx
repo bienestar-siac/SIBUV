@@ -27,9 +27,10 @@ export default function Router() {
 
     const init = () => {
         const data = getDecryptedCookie('session_vbu')
-        if (data?.id)
+        if (data?.id) {
             dispatch(setSession({ isAuth: true, user: data }));
-            navigate('/modules')
+            navigate('/module')
+        }
     }
 
     useEffect(init,[])
