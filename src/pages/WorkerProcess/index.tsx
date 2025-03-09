@@ -1,5 +1,5 @@
 // React
-import { Fragment, useMemo } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom';
 
 // Components
@@ -20,19 +20,34 @@ import { useDispatch } from "react-redux";
 import Handlers from './handlers'
 
 export default function Process() {
-    let { route } = useParams();
+    const { route } = useParams();
+    const [ isAvaibleRoute, set] = useState(null)
 
-    if (!route)
+    // Handlers
+    const handlers = Handlers({ route: route, set})
+    const routeCapitalized = handlers.capitalizedText(route)
+
+    // Effects
+    useMemo(handlers.init,[])    
+
+    if (isAvaibleRoute === null)
         return (
-            <Box sx={styles.contPrimary}>
-                <h1>Routa No Definida</h1>
+            <Box sx={styles.noFoundPage}>
+                <h1>
+                    Cargando Pagina...
+                </h1>
             </Box>            
         )
-    
-    const routeCapitalized = route
-        ?.split("-")
-        ?.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        ?.join(" ");
+
+    if (!route || isAvaibleRoute)
+        return (
+            <Box sx={styles.noFoundPage}>
+                <h1>
+                    No se encontro, ningun registro de la 
+                    pagina que esta tratando de acceder
+                </h1>
+            </Box>            
+        )
 
     return (
         <Fragment>
