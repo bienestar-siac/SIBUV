@@ -4,13 +4,17 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 export const processSlice = createSlice({
   name: "session",
   initialState: {
-    data: []
+    data: [],
+    permanent: []
   },
   reducers: {
     setDataProcess: (state, action) => {
       state.data = action.payload.data;
     },
+    setPermanentProcess: (state, action) => {
+      state.permanent = action.payload.permanent;
+    },
   },
 });
 
-export const { setDataProcess } = processSlice.actions;
+export const { setDataProcess, setPermanentProcess } = processSlice.actions;

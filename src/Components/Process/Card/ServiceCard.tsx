@@ -34,7 +34,7 @@ export default function ServicioCard ({ titulo, data, icono, color="#f44336", di
     const navigate = useNavigate();
 
     const handlerClick = (link) => {
-        if (link !== undefined)
+        if (link !== undefined && !disabled)
             navigate(link)
     }
 
@@ -45,7 +45,7 @@ export default function ServicioCard ({ titulo, data, icono, color="#f44336", di
               opacity: disabled? 0.3 : 1,
               cursor: disabled? 'not-allowed' : 'pointer',
           }}
-          onClick={() => navigate(data?.pagina)}
+          onClick={() => handlerClick(`/module/process/${data?.pagina}`)}
       >
         <CardContent sx={{ p: 3 }}>
           <Typography

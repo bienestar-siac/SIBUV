@@ -59,6 +59,36 @@ const styles: Styles = {
     titleModule: {
         fontWeight: 800,
         fontSize: '2em'
+    },
+    contBtnFilter: {
+        minWidth: '142px',
+        overflow: 'hidden'
+    },
+    contMenuFilter: {
+        '& .MuiPaper-root': {
+           width: '142px',
+           '& li': {
+              justifyContent: 'center'
+           }
+        }
+    },
+    contBtnFilterClose: {
+        display: 'flex',
+        alignContent: 'center',
+        justifyContent: 'space-between',
+        minWidth: '142px',
+        overflow: 'hidden'
+    },
+    contProcess: { 
+        width: '100vw', 
+        margin: '0 auto', 
+        maxWidth: '1350px', 
+        flexGrow: 1, 
+        p: 3 
+    },
+    spanText: {
+        height: '19px',
+        overflow: 'hidden'
     }
 }
 
