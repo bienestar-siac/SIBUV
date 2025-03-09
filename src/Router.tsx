@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, useEffect, Fragment } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 // Components
 import routes from "./router/Router";
@@ -19,6 +20,8 @@ import { setSession } from "./hooks/store";
  * Router
 */
 export default function Router() {
+    // Navigate
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const session = useSelector((state) => state.session);
 
@@ -26,6 +29,7 @@ export default function Router() {
         const data = getDecryptedCookie('session_vbu')
         if (data?.id)
             dispatch(setSession({ isAuth: true, user: data }));
+            navigate('/modules')
     }
 
     useEffect(init,[])
