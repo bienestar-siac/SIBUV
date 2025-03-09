@@ -29,7 +29,6 @@ export default function Router() {
         const data = getDecryptedCookie('session_vbu')
         if (data?.id) {
             dispatch(setSession({ isAuth: true, user: data }));
-            navigate('/module')
         }
     }
 
