@@ -1,5 +1,6 @@
 // React
 import { Fragment } from 'react'
+import { useNavigate } from "react-router";
 
 // Materia IU
 import {
@@ -15,7 +16,14 @@ import SchemaIcon from '@mui/icons-material/Schema';
 import { useSelector } from "react-redux";
 
 export default function Tools() {
+    // Navigate
+    const navigate = useNavigate();
     const procesosCards = useSelector((state) => state.viewProcess.tools);
+
+    const handlerNav = (active,path) => {
+        if (!active) return
+        navigate(`${window.location.pathname}/${path}`)
+    }
 
     return (
     <Fragment>
@@ -24,13 +32,21 @@ export default function Tools() {
             Herramientas
         </Typography>
         {/* Grid de tarjetas de procesos */}
-        <Grid container spacing={2} sx={{ mb: 5, cursor: 'pointer' }}>
+        <Grid 
+            container 
+            spacing={2} 
+            sx={{ 
+                mb: 5,
+            }}
+        >
             {procesosCards.map((card, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid onClick={() => handlerNav(card?.desativar === 'FALSE', card.path)}item xs={12} sm={6} md={3} key={index}>
                 <Card
                 sx={{
                     height: "100%",
                     transition: "box-shadow 0.3s",
+                    cursor: card?.desativar === 'FALSE'? 'pointer' : 'not-allowed',
+                    opacity: card?.desativar === 'FALSE'? 1 : 0.3, 
                     "&:hover": { boxShadow: 6 },
                 }}
                 >

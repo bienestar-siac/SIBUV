@@ -19,6 +19,9 @@ import { Link } from "react-router-dom";
 import Tools from './Tools/Tools'
 import TableActivities from './Table/Table'
 
+// Styles
+import styles from './styles'
+
 export default function WorkerProcess() {
 
   // Datos de ejemplo para los gráficos de progreso
@@ -27,9 +30,9 @@ export default function WorkerProcess() {
     { valor: 45, label: "Documentos procesados" },
     { valor: 90, label: "Cumplimiento general" },
   ]
-
+  
   return (
-    <Box sx={{ width: '-webkit-fill-available', maxWidth: 1300, margin: "0 auto", padding: '24px 0' }}>
+    <Box sx={styles.viewWorker}>
       <Tools />
       {/* Sección de cumplimiento de tareas */}
       <Typography variant="h5" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
@@ -39,7 +42,7 @@ export default function WorkerProcess() {
       <Grid container spacing={3}>
         <TableActivities />
         {/* Gráficos de progreso */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%'}}>
             <CardContent>
               <Typography variant="h6" component="h3" fontWeight="bold" sx={{ mb: 2, textAlign: "center" }}>
@@ -61,18 +64,7 @@ export default function WorkerProcess() {
                           },
                         }}
                       />
-                      <Box
-                        sx={{
-                          top: 0,
-                          left: 0,
-                          bottom: 0,
-                          right: 0,
-                          position: "absolute",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
+                      <Box sx={styles.circleProgress}>
                         <Typography variant="body1" component="div" fontWeight="bold">
                           {`${progreso.valor}%`}
                         </Typography>
