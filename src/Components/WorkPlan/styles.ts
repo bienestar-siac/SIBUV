@@ -27,6 +27,12 @@ const styles: Styles = {
             padding: '24px',
         }
     },
+    contIframe: {
+        height: '70vh'
+    },
+    contCardTabs: {
+        minHeight: '70vh'
+    },
     contOptions: {
         display: 'flex',
         justifyContent: 'right',

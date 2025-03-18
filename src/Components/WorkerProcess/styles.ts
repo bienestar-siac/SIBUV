@@ -31,7 +31,25 @@ const styles: Styles = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-    }
+    },
+    contOptions: {
+        position: 'absolute',
+        top: 0,
+        right: '25px',
+        display: 'flex',
+        justifyContent: 'right',
+        padding: '20px 0'
+    },
+    contBtnFilter: {
+        display: 'flex',
+        alignItems: 'center',
+        minWidth: '142px',
+        overflow: 'hidden',
+        padding: '8px',
+        '> span.title': {
+            height: '20px'
+        }
+    },
 }
 
 export default styles

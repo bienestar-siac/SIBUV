@@ -1,5 +1,5 @@
 // Redux
-import { setTools, setTaskList } from "../../hooks/viewProcess";
+import { setWorkPlan } from "../../hooks/viewProcess";
 
 // Fetch
 import { getViewDataProcess } from '../../services/process/decryptdata'
@@ -8,24 +8,20 @@ import { getViewDataProcess } from '../../services/process/decryptdata'
 import { useDispatch } from "react-redux";
 
 // Handlers
-export default ({ route, set }) => {
+export default ({ plan, set }) => {
     const dispatch = useDispatch();
     
     const 
         init = async () => {
             try {
                 const response = await getViewDataProcess({ 
-                    sheet_name: capitalizedText(route)
+                    sheet_name: 'Planes de Trabajo'
                 })
 
                 if (response?.length <= 0) return 
-                
-                dispatch(setTools({ tools: response.filter(
-                    (item) => item?.tipo_de_actividad  ===  "Herramienta") 
-                }))
-                
-                dispatch(setTaskList({ taskList: response.filter(
-                    (item) => item?.tipo_de_actividad  ===  "Tarea") 
+                console.log(response,"SetWorkPlan",capitalizedText(plan))
+                dispatch(setWorkPlan({ workPlan: response.find(
+                    (item) => item?.plan_de_trabajo  ===  String(capitalizedText(plan) || '').toUpperCase()) 
                 }))
                 
                 set(false)

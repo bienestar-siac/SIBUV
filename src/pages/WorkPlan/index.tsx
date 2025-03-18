@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 // Components
 import Header from "../../Components/Header/Header"
 import CustomBreadcrumbs from '../../Components/Breadcrumbs/Breadcrumbs'
-import WorkerProcess from '../../Components/WorkerProcess/WorkerProcess'
+import WorkPlan from '../../Components/WorkPlan/WorkPlan'
 
 // Material IU
 import { Box } from "@mui/material"
@@ -24,8 +24,9 @@ export default function Process() {
     const [ isAvaibleRoute, set] = useState(null)
 
     // Handlers
-    const handlers = Handlers({ route: route, set})
+    const handlers = Handlers({ plan: route, set})
     const routeCapitalized = handlers.capitalizedText(route)
+    const routePrimary = handlers.capitalizedText(tool)
 
     // Effects
     useMemo(handlers.init,[])    
@@ -58,18 +59,10 @@ export default function Process() {
                     { value: 'Modulos', path: '/modules'},
                     { value: 'Procesos', path: '/module/process'},
                     { value: `${routeCapitalized}`, path: `/module/process/${route}`},
+                    { value: `${routePrimary}`, path: `/module/process/${route}`},
                 ]} />
-                <Box
-                    sx={{
-                        padding: '10px',
-                        height: '100%',
-                        width: '100%',
-                        maxWidth: '1300px',
-                        margin: '0 auto',
-                        height: '80vh'
-                    }}
-                >
-                    <iframe width="100%" height="100%" src="https://docs.google.com/spreadsheets/d/1gtrI7nHubmPTU6MWuEmbV3VS4G_Jm-jGpnthkxoylYU/edit?gid=1475811537#gid=1475811537" />
+                <Box sx={styles.contPageLimit}>
+                    <WorkPlan />
                 </Box>
             </Box>
         </Fragment>

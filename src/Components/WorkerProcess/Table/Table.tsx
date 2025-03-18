@@ -1,4 +1,6 @@
 "use client"
+
+// React
 import { Fragment, useState } from 'react'
 
 // Material-UI
@@ -14,8 +16,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TablePagination
+  TablePagination,
+  Button,
+  Box
 } from "@mui/material"
+import AddIcon from '@mui/icons-material/Add';
 
 // Redux
 import { useSelector } from "react-redux"
@@ -23,11 +28,15 @@ import { useSelector } from "react-redux"
 // Styles
 import styles from '../styles.ts'
 
+// Components
+import UpdateTask from '../UpdateTask/updateTask'
+
 export default function TableActivities() {
   const actividades = useSelector((state) => state.viewProcess.taskList);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [open, setOpen] = useState(false)
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -42,14 +51,27 @@ export default function TableActivities() {
 
   return (
     <Fragment>
+      <UpdateTask {...{open, setOpen}} />
       {/* Tabla de actividades */}
       <Grid item xs={12} md={8}>
         <Card>
-          <CardContent>
+          <CardContent sx={{ position: 'relative'}}>
             <Typography variant="h6" component="h3" fontWeight="bold" sx={{ mb: 2 }}>
               Actividades
             </Typography>
-
+            <Box sx={styles.contOptions}>
+                <Button
+                    onClick={() => setOpen(true)}
+                    variant="contained"
+                    color="error"
+                    sx={styles.contBtnFilter}
+                    startIcon={<AddIcon />}
+                >
+                    <span className="title">
+                      ACTUALIZAR TAREA
+                    </span>
+                </Button>
+            </Box>
             <TableContainer component={Paper} elevation={0}>
               <Table>
                 <TableHead>

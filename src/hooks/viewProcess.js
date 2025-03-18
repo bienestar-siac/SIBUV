@@ -5,7 +5,8 @@ export const viewProcessSlice = createSlice({
   name: "viewProcess",
   initialState: {
     tools: [],
-    taskList: []
+    taskList: [],
+    workPlan: null
   },
   reducers: {
     setTools: (state, action) => {
@@ -14,7 +15,10 @@ export const viewProcessSlice = createSlice({
     setTaskList: (state, action) => {
       state.taskList = action.payload.taskList;
     },
+    setWorkPlan: (state, action) => {
+      state.workPlan = action.payload.workPlan;
+    },
   },
 });
 
-export const { setTools, setTaskList } = viewProcessSlice.actions;
+export const { setTools, setTaskList, setWorkPlan } = viewProcessSlice.actions;
