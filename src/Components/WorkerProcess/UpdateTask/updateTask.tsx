@@ -2,113 +2,107 @@
 
 // React
 import { useState } from "react"
+import { useParams } from 'react-router-dom'
 
 // Material UI
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
   FormControlLabel,
-  InputLabel,
-  MenuItem,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Typography,
   Box,
+  Snackbar,
+  Alert,
+  Autocomplete
 } from "@mui/material"
 
 // Redux
 import { useSelector } from "react-redux"
 
-export default function UpdateTask({ open, setOpen }) {
-  // Estados
-  let uniquesAvailables = []
-  const actividades = useSelector((state) => state.viewProcess.taskList)
-  const uniquetsActivies = actividades.filter((item) => {
-    let cond = uniquesAvailables.includes(item?.actividad)
-    if (!cond) uniquesAvailables.push(item?.actividad)
-    return !cond
-  })
+// Fetch 
+import { updateDataProcessTask } from '../../../services/process/Process'
 
-  console.log(uniquetsActivies, "actividades")
+/**
+ * Update Task
+ */
+export default function UpdateTask({ open, setOpen }) {
+  // Params
+  const { route } = useParams()
+
+  // Obtener todas las tareas
+  const actividades = useSelector((state) => state.viewProcess.taskList)
+
+  // Generar arreglo único de actividades (como string)
+  const uniqueActivityOptions = Array.from(new Set(actividades.map(item => item?.actividad)))
+
   // Estados del formulario
   const [selectedActivity, setSelectedActivity] = useState("")
-  const [selectedTask, setSelectedTask] = useState("")
-  // Se asume que el estado inicial de la tarea es "pendiente"
-  const [estado, setEstado] = useState("pendiente")
+  // Para la tarea, usamos un objeto o null
+  const [selectedTask, setSelectedTask] = useState(null)
+  // Estado inicial de la tarea
+  const [estado, setEstado] = useState("Pendiente")
   const [descripcion, setDescripcion] = useState("")
 
-  // Ejemplo de tareas (aunque en este caso no se utilizan para renderizar el selector de tareas)
-  const tareas = {
-    "1": [
-      { id: "1-1", nombre: "Suministrar y organizar la información que se requiere" },
-      { id: "1-2", nombre: "Realizar pruebas técnicas en la implementación del sistema" },
-    ],
-    "2": [
-      { id: "2-1", nombre: "Diagnóstico en riesgo psicosocial de acuerdo a base" },
-      { id: "2-2", nombre: "Realizar visitas a los puestos de trabajo" },
-    ],
-    "3": [
-      { id: "3-1", nombre: "Realizar procesos de formación y capacitación a funcionarios" },
-      { id: "3-2", nombre: "Realizar consulta individual con psicología ocupacional" },
-    ],
-  }
+  // Estados para el botón de loading y mensajes
+  const [loading, setLoading] = useState(false)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
 
   // Manejadores de eventos
-  const handleOpen = () => setOpen(true)
-
   const handleClose = () => {
     setOpen(false)
     // Resetear el formulario
     setSelectedActivity("")
-    setSelectedTask("")
-    setEstado("pendiente")
+    setSelectedTask(null)
+    setEstado("Pendiente")
     setDescripcion("")
   }
 
-  const handleActivityChange = (event) => {
-    setSelectedActivity(event.target.value)
-    setSelectedTask("")
+  const capitalizedText = (text: string) => {
+    return text
+      ?.split("-")
+      ?.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      ?.join(" ")
   }
 
-  const handleTaskChange = (event) => {
-    setSelectedTask(event.target.value)
+  const handleSubmit = async () => {
+    setLoading(true)
+    try {
+      const response = await updateDataProcessTask({
+        "sheet_name": capitalizedText(route),
+        "id": Number(selectedTask?.id || 0),
+        "estado": estado,
+        "detalles_seguimiento": descripcion || " "
+      })
+
+      if(response?.message) {
+         setSnackbar({ open: true, message: "Actualización exitosa!", severity: "success" })
+         handleClose() // Cierra el modal al ser correcto
+      } else {
+         setSnackbar({ open: true, message: "Error en la actualización.", severity: "error" })
+      }
+    } catch (error) {
+      setSnackbar({ open: true, message: "Error en la actualización.", severity: "error" })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleEstadoChange = (event) => {
-    setEstado(event.target.value)
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false })
   }
 
-  const handleDescripcionChange = (event) => {
-    setDescripcion(event.target.value)
-  }
-
-  const handleSubmit = () => {
-    // Aquí iría la lógica para guardar los cambios
-    console.log({
-      actividad: selectedActivity,
-      tarea: selectedTask,
-      estado,
-      descripcion,
-    })
-
-    // Cerrar el diálogo y resetear
-    handleClose()
-
-    // Mostrar mensaje de éxito
-    alert("Tarea actualizada correctamente")
-  }
-
-  // Obtener las tareas para la actividad seleccionada
-  const tareasDeActividad =
-    selectedActivity
-      ? actividades.filter((item) => item?.actividad === selectedActivity) || []
-      : []
+  // Filtrar las tareas según la actividad seleccionada
+  const tareasDeActividad = selectedActivity
+    ? actividades.filter((item) => item?.actividad === selectedActivity)
+    : []
 
   return (
     <>
@@ -116,69 +110,42 @@ export default function UpdateTask({ open, setOpen }) {
         <DialogTitle>Actualizar Avance de Tarea</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
-            {/* Selector de Actividad */}
+            {/* Autocomplete para seleccionar Actividad */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Seleccionar Actividad</InputLabel>
-              <Select
+              <Autocomplete
+                options={uniqueActivityOptions}
                 value={selectedActivity}
-                label="Seleccionar Actividad"
-                onChange={handleActivityChange}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 500,
-                    },
-                  },
+                onChange={(event, newValue) => {
+                  setSelectedActivity(newValue || "")
+                  // Limpiar la tarea al cambiar la actividad
+                  setSelectedTask(null)
                 }}
-              >
-                {uniquetsActivies.map((actividad) => (
-                  <MenuItem
-                    key={actividad.id}
-                    value={actividad?.actividad}
-                    sx={{
-                      maxWidth: 500,
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {actividad?.actividad}
-                  </MenuItem>
-                ))}
-              </Select>
+                renderInput={(params) => (
+                  <TextField {...params} label="Seleccionar Actividad" variant="outlined" />
+                )}
+                clearOnEscape
+              />
             </FormControl>
 
-            {/* Selector de Tarea (visible solo si hay actividad seleccionada) */}
+            {/* Autocomplete para seleccionar Tarea (solo si hay actividad seleccionada) */}
             {selectedActivity && (
               <FormControl fullWidth margin="normal">
-                <InputLabel>Seleccionar Tarea</InputLabel>
-                <Select
+                <Autocomplete
+                  options={tareasDeActividad}
                   value={selectedTask}
-                  label="Seleccionar Tarea"
-                  onChange={handleTaskChange}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 500,
-                      },
-                    },
+                  onChange={(event, newValue) => {
+                    setSelectedTask(newValue)
+                    if (newValue) {
+                      setEstado(newValue.estado)
+                      setDescripcion(newValue.detalles_seguimiento)
+                    }
                   }}
-                >
-                  {tareasDeActividad.map((tarea) => (
-                    <MenuItem
-                      key={tarea.id}
-                      value={tarea?.id}
-                      sx={{
-                        maxWidth: 500,
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {tarea?.tarea}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  getOptionLabel={(option) => option?.tarea || ""}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Seleccionar Tarea" variant="outlined" />
+                  )}
+                  clearOnEscape
+                />
               </FormControl>
             )}
 
@@ -189,32 +156,32 @@ export default function UpdateTask({ open, setOpen }) {
                   <Typography variant="subtitle1" gutterBottom>
                     Estado de la Tarea
                   </Typography>
-                  <RadioGroup name="estado" value={estado} onChange={handleEstadoChange}>
+                  <RadioGroup name="estado" value={estado} onChange={(event) => setEstado(event.target.value)}>
                     <FormControlLabel
-                      value="pendiente"
+                      value="Pendiente"
                       control={<Radio sx={{ color: "red", "&.Mui-checked": { color: "red" } }} />}
                       label="Pendiente"
                     />
                     <FormControlLabel
-                      value="en-proceso"
+                      value="En Curso"
                       control={<Radio sx={{ color: "red", "&.Mui-checked": { color: "red" } }} />}
-                      label="En Proceso"
+                      label="En Curso"
                     />
                     <FormControlLabel
-                      value="completada"
+                      value="Finalizada"
                       control={<Radio sx={{ color: "red", "&.Mui-checked": { color: "red" } }} />}
-                      label="Completada"
+                      label="Finalizada"
                     />
                   </RadioGroup>
                 </FormControl>
 
-                <FormControl sx={{ marginTop: '40px'}} fullWidth margin="normal">
+                <FormControl sx={{ marginTop: '40px' }} fullWidth margin="normal">
                   <TextField
                     label="Descripción de la Actualización del Seguimiento"
                     multiline
                     rows={4}
                     value={descripcion}
-                    onChange={handleDescripcionChange}
+                    onChange={(event) => setDescripcion(event.target.value)}
                     placeholder="Ingrese detalles sobre la actualización de esta tarea..."
                   />
                 </FormControl>
@@ -223,21 +190,29 @@ export default function UpdateTask({ open, setOpen }) {
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleClose} variant="outlined">
-            Cancelar
-          </Button>
+          { 
+            !loading &&
+            <Button onClick={handleClose} variant="outlined">
+              Cancelar
+            </Button>
+          }
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={!selectedTask || estado === "pendiente"}
+            disabled={loading || !selectedTask || estado === "Pendiente"}
             style={{
-              backgroundColor: selectedTask && estado !== "pendiente" ? "#dc2626" : undefined,
+              backgroundColor: selectedTask && estado !== "Pendiente" ? "#dc2626" : undefined,
             }}
           >
-            Guardar Cambios
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Guardar Cambios"}
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
