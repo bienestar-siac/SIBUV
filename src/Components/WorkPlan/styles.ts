@@ -47,6 +47,28 @@ const styles: Styles = {
             height: '20px'
         }
     },
+    FieldText: {
+        'input': {
+            padding: '20px'
+        },
+        "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "initial",
+            },
+            "&:hover fieldset": {
+              borderColor: "#eb3e26",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#eb3e26",
+            },
+        },
+        "& .MuiInputLabel-root": {
+            color: "initial",
+        },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#eb3e26",
+        },
+    }
 }
 
 export default styles

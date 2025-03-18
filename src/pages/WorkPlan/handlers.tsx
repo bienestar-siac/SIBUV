@@ -1,5 +1,5 @@
 // Redux
-import { setWorkPlan } from "../../hooks/viewProcess";
+import { setWorkPlan, setFormProcess } from "../../hooks/viewProcess";
 
 // Fetch
 import { getViewDataProcess } from '../../services/process/decryptdata'
@@ -17,13 +17,21 @@ export default ({ plan, set }) => {
                 const response = await getViewDataProcess({ 
                     sheet_name: 'Planes de Trabajo'
                 })
+                const responseForm = await getViewDataProcess({ 
+                    sheet_name: 'INFORME'
+                })
 
                 if (response?.length <= 0) return 
-                console.log(response,"SetWorkPlan",capitalizedText(plan))
+                if (responseForm?.length <= 0) return
+                
                 dispatch(setWorkPlan({ workPlan: response.find(
                     (item) => item?.plan_de_trabajo  ===  String(capitalizedText(plan) || '').toUpperCase()) 
                 }))
                 
+                dispatch(setFormProcess({ formProcess: responseForm.filter(
+                    (item) => item?.proceso  ===  String(capitalizedText(plan) || '').toUpperCase()) 
+                }))
+
                 set(false)
             } catch (e) {
                 console.error(e);

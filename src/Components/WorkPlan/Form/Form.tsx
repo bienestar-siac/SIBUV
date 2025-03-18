@@ -1,8 +1,9 @@
 "use client"
 
+// React
 import type React from "react"
 
-import { useState } from "react"
+// Material IU
 import {
   Dialog,
   DialogContent,
@@ -18,55 +19,36 @@ import {
   Typography,
 } from "@mui/material"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
-import InformacionGeneral from "./Steps/informacion-general"
-import SeccionesBienestar from "./Steps/secciones-bienestar"
-import ProgramasPoliticas from "./Steps/programas-politicas"
-import DatosClave from "./Steps/datos-clave"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
 
-interface CrearInformeModalProps {
-  open: boolean
-  onClose: () => void
-  workPlan?: { url: string }
-}
+// Interface
+import { CrearInformeModalProps } from '../../../interfaces/interfaces'
 
 // Styles
 import styles from '../styles'
 
+// Handlers
+import Handlers from './handlers'
+
+// Redux
+import { useSelector } from "react-redux";
+
 export default function Form({ open = true, onClose, workPlan }: CrearInformeModalProps) {
-  const [activeStep, setActiveStep] = useState(0)
-  const [tabValue, setTabValue] = useState(0)
 
-  const pasos = ["Información General", "Secciones de Bienestar", "Programas y Políticas", "Datos Clave"]
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1)
-  }
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1)
-  }
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue)
-  }
-
-  const renderStepContent = (step: number) => {
-    switch (step) {
-      case 0:
-        return <InformacionGeneral />
-      case 1:
-        return <SeccionesBienestar />
-      case 2:
-        return <ProgramasPoliticas />
-      case 3:
-        return <DatosClave />
-      default:
-        return <div>Paso no encontrado</div>
-    }
-  }
-
+  const formItems = useSelector((state) => state.viewProcess.formProcess);
+  const {
+    activeStep, 
+    setActiveStep,
+    tabValue, 
+    setTabValue,
+    pasos,
+    handleNext,
+    handleBack,
+    handleTabChange,
+    renderStepContent
+  } = Handlers({ data: formItems})
+  console.log(formItems,"formItems")
   return (
     <Card sx={styles.contCardTabs}>
       <CardContent>
@@ -89,7 +71,7 @@ export default function Form({ open = true, onClose, workPlan }: CrearInformeMod
             variant="fullWidth"
           >
             <Tab label="Plan De Trabajo" value={0} />
-            <Tab label="Crear Informe" value={1} />
+            <Tab label="Generar Informe de Gestion" value={1} />
           </Tabs>
         </AppBar>
 

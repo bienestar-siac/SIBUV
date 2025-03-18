@@ -9,3 +9,9 @@ export interface ServicioCardProps {
     icono: React.ReactNode
     color: string
 }
+
+export interface CrearInformeModalProps {
+    open: boolean
+    onClose: () => void
+    workPlan?: { url: string }
+}
