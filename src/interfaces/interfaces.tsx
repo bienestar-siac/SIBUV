@@ -15,3 +15,10 @@ export interface CrearInformeModalProps {
     onClose: () => void
     workPlan?: { url: string }
 }
+
+export interface Informe {
+    id: string
+    fecha: string
+    editor: string
+    estado: "completado" | "pendiente" | "revisión"
+}

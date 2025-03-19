@@ -1,11 +1,10 @@
 // React
-import { Fragment, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { Fragment, useState, useMemo } from 'react'
 
 // Components
 import Header from "../../Components/Header/Header"
+import GestionReportView from "../../Components/GestionReport/GestionReport"
 import CustomBreadcrumbs from '../../Components/Breadcrumbs/Breadcrumbs'
-import WorkPlan from '../../Components/WorkPlan/WorkPlan'
 
 // Material IU
 import { Box } from "@mui/material"
@@ -16,14 +15,11 @@ import styles from './styles'
 // Handlers
 import Handlers from './handlers'
 
-export default function Process() {
-    const { route, tool } = useParams();
-    const [ isAvaibleRoute, set] = useState(null)
+export default function GestionReport() {
+    const [ isAvaibleRoute, set ] = useState(null)
 
     // Handlers
-    const handlers = Handlers({ plan: route, set})
-    const routeCapitalized = handlers.capitalizedText(route)
-    const routePrimary = handlers.capitalizedText(tool)
+    const handlers = Handlers({ set })
 
     // Effects
     useMemo(handlers.init,[])    
@@ -37,7 +33,7 @@ export default function Process() {
             </Box>            
         )
 
-    if (!route || isAvaibleRoute)
+    if (isAvaibleRoute === true)
         return (
             <Box sx={styles.noFoundPage}>
                 <h1>
@@ -52,16 +48,14 @@ export default function Process() {
             <Box sx={styles.contPrimary}>
                 <Header />
                 <CustomBreadcrumbs paths={[
-                    { value: 'Inicio', path: '/'}, 
+                    { value: 'Inicio', path: '#'}, 
                     { value: 'Modulos', path: '/modules'},
-                    { value: 'Procesos', path: '/module/process'},
-                    { value: `${routeCapitalized}`, path: `/module/process/${route}`},
-                    { value: `${routePrimary}`, path: `/module/process/${route}`},
+                    { value: 'Informe de Gestión', path: '/modules'},
                 ]} />
                 <Box sx={styles.contPageLimit}>
-                    <WorkPlan />
+                    <GestionReportView />
                 </Box>
             </Box>
         </Fragment>
-    )  
-}
+    )
+} 

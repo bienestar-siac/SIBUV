@@ -18,7 +18,7 @@ export default function Modules() {
             <Box sx={styles.contPrimary}>
                 <Header />
                 <CustomBreadcrumbs paths={[
-                    { value: 'Inicio', path: '/'}, 
+                    { value: 'Inicio', path: '#'}, 
                     { value: 'Modulos', path: '/modules'},
                 ]} />
                 <SectionModules />

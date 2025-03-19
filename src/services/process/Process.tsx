@@ -13,3 +13,11 @@ export const updateDataProcessTask = (data,sheet='updateProcess') => {
         urlEndPoint: `/api/v1/sheets/${sheet}`
     })
 }
+
+export const generateDoc = (data) => {
+    return fetchPostGeneral({
+        dataSend: data, 
+        urlEndPoint: `/execute`,
+        path: 'https://google-doc-api-delta.vercel.app'
+    })
+}

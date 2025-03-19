@@ -48,7 +48,7 @@ export default function Form({ open = true, onClose, workPlan }: CrearInformeMod
     handleTabChange,
     renderStepContent
   } = Handlers({ data: formItems})
-  console.log(formItems,"formItems")
+
   return (
     <Card sx={styles.contCardTabs}>
       <CardContent>

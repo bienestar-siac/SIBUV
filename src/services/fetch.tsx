@@ -15,11 +15,12 @@ const methodGet = 'GET';
  * @param {*} param0 
  * @returns 
  */
-export const fetchPostGeneral = ({ dataSend, urlEndPoint }) => {
+export const fetchPostGeneral = ({ dataSend, urlEndPoint, path="#" }) => {
     return fetchGeneral({
         dataSend,
         urlEndPoint,
-        type: methodPost     
+        type: methodPost,
+        path
     });
 }
 
@@ -59,7 +60,8 @@ export const fetchGetGeneral = ({ urlEndPoint }) => {
 const fetchGeneral = async ({
     dataSend,
     urlEndPoint,
-    type
+    type,
+    path = '#'
 }) => {
     let response = null
     try {
@@ -74,7 +76,7 @@ const fetchGeneral = async ({
             options.body = JSON.stringify(dataSend);
         }
 
-        response = await fetch(`${uri.baseUrl}${urlEndPoint}`, options);
+        response = await fetch(`${path === '#'? uri.baseUrl : path}${urlEndPoint}`, options);
         return await response.json();
         
     } catch (error) {

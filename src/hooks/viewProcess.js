@@ -7,7 +7,8 @@ export const viewProcessSlice = createSlice({
     tools: [],
     taskList: [],
     workPlan: null,
-    formProcess: []
+    formProcess: [],
+    reportForms: []
   },
   reducers: {
     setTools: (state, action) => {
@@ -22,7 +23,10 @@ export const viewProcessSlice = createSlice({
     setFormProcess: (state, action) => {
       state.formProcess = action.payload.formProcess;
     },
+    setReportForms: (state, action) => {
+      state.reportForms = action.payload.reportForms;
+    },
   },
 });
 
-export const { setTools, setTaskList, setWorkPlan, setFormProcess } = viewProcessSlice.actions;
+export const { setTools, setTaskList, setWorkPlan, setFormProcess, setReportForms } = viewProcessSlice.actions;

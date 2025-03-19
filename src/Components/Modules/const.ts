@@ -18,6 +18,6 @@ export default [
       subtitle: "Procesos Internos de Bienestar Universitario",
       icon: "/icons/2.png",
       color: "#F44336",
-      path: '#',
+      path: '/module/informe-de-gestion',
     },
 ]
