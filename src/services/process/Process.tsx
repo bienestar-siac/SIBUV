@@ -7,9 +7,9 @@ export const getDataSheet = (data) => {
     })
 }
 
-export const updateDataProcessTask = (data) => {
+export const updateDataProcessTask = (data,sheet='updateProcess') => {
     return fetchPostGeneral({
         dataSend: data, 
-        urlEndPoint: `/api/v1/sheets/updateProcess`
+        urlEndPoint: `/api/v1/sheets/${sheet}`
     })
 }
