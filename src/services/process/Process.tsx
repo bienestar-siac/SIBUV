@@ -18,6 +18,6 @@ export const generateDoc = (data) => {
     return fetchPostGeneral({
         dataSend: data, 
         urlEndPoint: `/execute`,
-        path: 'https://google-doc-api-delta.vercel.app'
+        path: 'http://34.75.28.50/server-pdf'
     })
 }

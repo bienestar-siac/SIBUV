@@ -49,10 +49,17 @@ import { useSelector } from "react-redux";
 // Fetch
 import { generateDoc as fetchGenerateDoc, updateDataProcessTask } from '../../services/process/Process'
 
+// Redux
+import { setReportForms } from "../../hooks/viewProcess";
+
+// Redux
+import { useDispatch, author } from "react-redux";
+
 export default function GestionReport() {
   const [activeTab, setActiveTab] = useState(0)
   const [loading, setLoading] = useState(false)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
+  const dispatch = useDispatch();
 
   const informes: Informe[] = useSelector((state) => state.viewProcess.reportForms);
   const formItems = useSelector((state) => state.viewProcess.formProcess);
@@ -81,6 +88,14 @@ export default function GestionReport() {
     setActiveTab(newValue)
   }
 
+  const getFormattedDate = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Sumar 1 porque los meses van de 0-11
+    const year = String(now.getFullYear()).slice(-2); // Obtener los últimos 2 dígitos del año
+    return `${day}/${month}/${year}`;
+  };
+
   const handleGenerateDoc = async () => {
     setLoading(true)
     try {
@@ -92,15 +107,17 @@ export default function GestionReport() {
       if (response.status) {
         const responseUpdate = await updateDataProcessTask({
           "sheet_name": "INFOMES GENERADOS",
-          "fecha": "19/03/25",
+          "fecha": getFormattedDate(),
           "author": dataUser?.user?.email,
-          "id_doc": response?.urlDocumento
-        })
+          "id_doc": response?.urlDocumento,
+        },'registerFormDoc')
+        console.log(responseUpdate,"responseUpdate")
         setSnackbar({ open: true, message: "Informe generado exitosamente!", severity: "success" })
       } else {
         setSnackbar({ open: true, message: "Error al generar el informe.", severity: "error" })
       }
     } catch (error) {
+      console.log(error)
       setSnackbar({ open: true, message: "Error al generar el informe.", severity: "error" })
     } finally {
       setLoading(false)
@@ -171,15 +188,15 @@ export default function GestionReport() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {informes.length > 0 ? (
-                    informes.map((informe) => (
-                      <TableRow key={informe.id} hover>
-                        <TableCell sx={{ fontWeight: "medium" }}>{informe.id}</TableCell>
+                  {informes?.length > 0 ? (
+                    informes.map((informe, index) => (
+                      <TableRow key={index} hover>
+                        <TableCell sx={{ fontWeight: "medium" }}>{index + 1}</TableCell>
                         <TableCell>{informe.fecha}</TableCell>
-                        <TableCell>{informe.editor}</TableCell>
+                        <TableCell>{informe?.author}</TableCell>
                         <TableCell>{getEstadoChip(informe.estado)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="small" color="primary">
+                          <IconButton href={`https://docs.google.com/document/d/${informe?.id_doc}`} target="_blank" size="small" color="primary">
                             <DownloadIcon />
                           </IconButton>
                         </TableCell>
