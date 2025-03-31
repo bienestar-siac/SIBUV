@@ -7,7 +7,7 @@ const styles: Styles = {
         display: 'flex',
         flexDirection: 'column',
         background: '#f5f5f5',
-        minHeight: 'calc(100vh - 70px)',
+        minHeight: 'calc(100% - 70px)',
         marginTop: '70px'
     }
 }

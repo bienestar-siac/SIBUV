@@ -9,4 +9,7 @@ export const serviciosImg = {
     '7': '/process/7.png',
     '8': '/process/8.png',
     '9': '/process/9.png',
+    '10': '/process/10.png',
+    '11': '/process/11.png',
+    '12': '/process/12.png',
 }

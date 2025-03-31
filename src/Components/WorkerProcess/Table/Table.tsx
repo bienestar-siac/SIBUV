@@ -1,5 +1,3 @@
-"use client"
-
 // React
 import { Fragment, useState } from 'react'
 
@@ -28,31 +26,26 @@ import { useSelector } from "react-redux"
 // Styles
 import styles from '../styles.ts'
 
+// Handlers
+import Handlers from './Handler'
+
 // Components
 import UpdateTask from '../UpdateTask/updateTask'
 
 export default function TableActivities() {
-  const actividades = useSelector((state) => state.viewProcess.taskList);
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(7);
-  const [open, setOpen] = useState(false)
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 7));
-    setPage(0);
-  };
-
-  const paginatedData = actividades.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const {
+    page,
+    actividades,
+    rowsPerPage, 
+    open, setOpen,
+    paginatedData,
+    handleChangeRowsPerPage,
+    handleChangePage
+  } = Handlers()
 
   return (
     <Fragment>
       <UpdateTask {...{open, setOpen}} />
-      {/* Tabla de actividades */}
       <Grid item xs={12} md={8}>
         <Card>
           <CardContent sx={{ position: 'relative'}}>

@@ -38,7 +38,7 @@ export default function Process() {
                 </h1>
             </Box>            
         )
-
+    console.log(!route || isAvaibleRoute,"!route || isAvaibleRoute)")
     if (!route || isAvaibleRoute)
         return (
             <Box sx={styles.noFoundPage}>

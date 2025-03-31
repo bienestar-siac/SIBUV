@@ -21,6 +21,8 @@ export default ({ plan, set }) => {
                     sheet_name: 'INFORME'
                 })
 
+                console.log(responseForm,"response",plan)
+
                 if (response?.length <= 0) return 
                 if (responseForm?.length <= 0) return
                 

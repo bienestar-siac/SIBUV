@@ -111,7 +111,7 @@ export default function GestionReport() {
           "author": dataUser?.user?.email,
           "id_doc": response?.urlDocumento,
         },'registerFormDoc')
-        console.log(responseUpdate,"responseUpdate")
+
         setSnackbar({ open: true, message: "Informe generado exitosamente!", severity: "success" })
       } else {
         setSnackbar({ open: true, message: "Error al generar el informe.", severity: "error" })
