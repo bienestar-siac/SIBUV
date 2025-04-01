@@ -11,6 +11,7 @@ const styles: Styles = {
         display: '-webkit-box',
         WebkitBoxOrient: 'vertical',
         WebkitLineClamp: 1,
+        textTransform: 'uppercase',
         overflow: 'hidden',
     },
     cardProcess: {

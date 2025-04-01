@@ -55,8 +55,13 @@ import { setReportForms } from "../../hooks/viewProcess";
 // Redux
 import { useDispatch, author } from "react-redux";
 
+// Components
+import FormDinamic from '../WorkPlan/Form/FormDinamic'
+
+// Handlers
+import Handlers from './handlers'
+
 export default function GestionReport() {
-  const [activeTab, setActiveTab] = useState(0)
   const [loading, setLoading] = useState(false)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
   const dispatch = useDispatch();
@@ -71,30 +76,19 @@ export default function GestionReport() {
     }
   })
 
-  const getEstadoChip = (estado: string) => {
-    switch (estado) {
-      case "completado":
-        return <Chip label="Completado" color="success" size="small" />
-      case "pendiente":
-        return <Chip label="Pendiente" color="warning" size="small" />
-      case "revisión":
-        return <Chip label="En revisión" color="info" size="small" />
-      default:
-        return null
-    }
-  }
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue)
-  }
-
-  const getFormattedDate = () => {
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // Sumar 1 porque los meses van de 0-11
-    const year = String(now.getFullYear()).slice(-2); // Obtener los últimos 2 dígitos del año
-    return `${day}/${month}/${year}`;
-  };
+  const {
+    activeTab,
+    activeStep,
+    setActiveStep,
+    setTabValue,
+    pasos,
+    handleNext,
+    handleBack,
+    handleTabChange,
+    renderStepContent,
+    getEstadoChip,
+    getFormattedDate
+  } = Handlers({ data: formItems})
 
   const handleGenerateDoc = async () => {
     setLoading(true)
@@ -217,9 +211,7 @@ export default function GestionReport() {
       )}
 
       {activeTab === 1 && (
-        <Card variant="outlined">
-          <h1>En construcción</h1>
-        </Card>
+        <FormDinamic {...{activeStep, pasos, renderStepContent, handleNext, handleBack  }} />
       )}
 
       <Snackbar

@@ -15,7 +15,7 @@ import Form from './Form/Form'
 
 export default function WorkPlan() {
     const workPlan = useSelector((state) => state.viewProcess.workPlan);
-    console.log(workPlan,"workPlan")
+    
     if (!workPlan?.url) {
         return (
             <Box>
@@ -25,6 +25,8 @@ export default function WorkPlan() {
     }
 
     return (
-        <Box><Form workPlan={workPlan} /></Box>
+        <Box>
+            <Form workPlan={workPlan} />
+        </Box>
     )
 }
