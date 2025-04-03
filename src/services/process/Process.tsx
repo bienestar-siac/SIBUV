@@ -18,6 +18,6 @@ export const generateDoc = (data) => {
     return fetchPostGeneral({
         dataSend: data, 
         urlEndPoint: `/execute`,
-        path: 'http://34.75.28.50/server-pdf'
+        path: 'http://35.209.82.250/server-pdf'
     })
 }

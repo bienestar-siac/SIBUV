@@ -3,5 +3,5 @@ type fecthUris = {
 }
 
 export const uri: fecthUris = {
-    baseUrl: 'https://backend-bienestar.onrender.com'
+    baseUrl: 'http://35.209.82.250/backend'
 }
