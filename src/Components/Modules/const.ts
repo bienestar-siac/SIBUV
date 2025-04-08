@@ -11,7 +11,7 @@ export default [
       subtitle: "Procesos Internos de Bienestar Universitario",
       icon: "/icons/3.png",
       color: "#F44336",
-      path: '#',
+      path: '/module/sistema-interno-de-aseguramiento-de-calidad',
     },
     {
       title: "Informe de gestión",
