@@ -1,6 +1,7 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { processSlice } from './process'
 import { viewProcessSlice } from './viewProcess'
+import { moduleQuality } from './moduleQuality'
 
 // Definimos un slice para manejar la sesión
 const sessionSlice = createSlice({
@@ -27,7 +28,8 @@ const store = configureStore({
   reducer: {
     session: sessionSlice.reducer,
     process: processSlice.reducer,
-    viewProcess: viewProcessSlice.reducer
+    viewProcess: viewProcessSlice.reducer,
+    moduleQuality: moduleQuality.reducer,
   },
 });
 

@@ -1,11 +1,13 @@
 // Redux
-import { setWorkPlan, setFormProcess } from "../../hooks/viewProcess";
+import { setAccreditation, setActivitys } from "../../hooks/moduleQuality";
 
 // Fetch
 import { getViewDataProcess } from '../../services/process/decryptdata'
 
 // Redux
 import { useDispatch } from "react-redux";
+
+const SPREADSHEETID ="10Q92SyArYmoBT3iINuM88AVGLk_OXufMMDpfKiHVGc8"
 
 // Handlers
 export default ({ set }) => {
@@ -14,25 +16,24 @@ export default ({ set }) => {
     const 
         init = async () => {
             try {
-                // const response = await getViewDataProcess({ 
-                //     sheet_name: 'Planes de Trabajo'
-                // })
-                // const responseForm = await getViewDataProcess({ 
-                //     sheet_name: 'INFORME'
-                // })
+                const response = await getViewDataProcess({ 
+                    sheet_name: 'Factor 9',
+                    spreadsheet_id: SPREADSHEETID
+                })
+                const responseActividades = await getViewDataProcess({ 
+                    sheet_name: 'Acreditación Institucional',
+                })
 
-                // console.log(responseForm,"response",plan)
+                if (response?.length <= 0) return 
+                if (responseActividades?.length <= 0) return
 
-                // if (response?.length <= 0) return 
-                // if (responseForm?.length <= 0) return
+                dispatch(setAccreditation({ accreditation: 
+                    responseActividades.filter( (item) => {
+                        return String(item?.origen) === 'Acreditación Institucional'
+                    })
+                }))
                 
-                // dispatch(setWorkPlan({ workPlan: response.find(
-                //     (item) => item?.plan_de_trabajo  ===  String(capitalizedText(plan) || '').toUpperCase()) 
-                // }))
-                
-                // dispatch(setFormProcess({ formProcess: responseForm.filter(
-                //     (item) => item?.proceso  ===  String(capitalizedText(plan) || '').toUpperCase()) 
-                // }))
+                dispatch(setActivitys({ activitys: response }))
 
                 set(false)
             } catch (e) {

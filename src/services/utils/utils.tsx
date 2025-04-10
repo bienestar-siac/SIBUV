@@ -25,7 +25,6 @@ export async function decryptData<FunctionDescrypt>(ciphertext: string) {
     const encoder = new TextEncoder();
     const keyData = encoder.encode(adjustedKey);
   
-    // Importar la clave para usarla con AES-GCM
     const cryptoKey = await crypto.subtle.importKey(
       "raw",
       keyData,
@@ -35,13 +34,12 @@ export async function decryptData<FunctionDescrypt>(ciphertext: string) {
     );
   
     try {
-      // Desencriptar usando Web Crypto API
       const decryptedBuffer = await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: nonce },
         cryptoKey,
         ciphertextAndTag
       );
-      // Convertir el ArrayBuffer resultante a string
+      
       const decoder = new TextDecoder();
       return decoder.decode(decryptedBuffer);
     } catch (error) {

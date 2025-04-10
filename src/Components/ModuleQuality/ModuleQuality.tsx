@@ -1,7 +1,7 @@
+// React
 import type React from "react"
-import { Fragment } from "react"
+import { Fragment, useState, useMemo } from "react"
 
-import { useState } from "react"
 import {
   AppBar,
   Toolbar,
@@ -37,6 +37,9 @@ import {
 } from "@mui/material"
 import { AccountCircle, Visibility, Close } from "@mui/icons-material"
 
+// Redux
+import { useSelector } from "react-redux"
+
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
@@ -54,38 +57,27 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function Quality() {
+  const dataAccreditation = useSelector((state) => state.moduleQuality.accreditation);
+  const activitiesData = useSelector((state) => state.moduleQuality.activitys);
+  console.log(activitiesData)
   const [tabValue, setTabValue] = useState(0)
   const [oportunidad, setOportunidad] = useState("")
   const [indicador, setIndicador] = useState("")
   const [formula, setFormula] = useState("")
-  const [progress, setProgress] = useState(60)
+  const [progress, setProgress] = useState(0)
   const [modalAbierto, setModalAbierto] = useState(false);
-  const theme = useTheme()
-    const activities = [
-        { id: 1, nombre: 'Actividad 1', descripcion: 'Descripción de la actividad 1' },
-        { id: 2, nombre: 'Actividad 2', descripcion: 'Descripción de la actividad 2' },
-        { id: 3, nombre: 'Actividad 3', descripcion: 'Descripción de la actividad 3' },
-    ];
+  const [activities, setActivities] = useState(activitiesData)
+  const [opportunityImprovement] = useState(activitiesData.map((item, index) => index > 0 && item["oportunidad de mejora"]))
+  
+  // Usar improvementOpportunity en el filtro
+  const [activitiesSelect, setActivitiesSelect] = useState([]);
 
-  const tasks = [
-    { id: 101, name: 'Tarea 1', activityId: 1 },
-    { id: 102, name: 'Tarea 2', activityId: 1 },
-    { id: 103, name: 'Tarea 3', activityId: 1 },
-    { id: 104, name: 'Tarea 4', activityId: 1 },
-    { id: 105, name: 'Tarea 5', activityId: 1 },
-    { id: 106, name: 'Tarea 6', activityId: 2 },
-    { id: 107, name: 'Tarea 7', activityId: 2 },
-    { id: 108, name: 'Tarea 8', activityId: 2 },
-    { id: 109, name: 'Tarea 9', activityId: 3 },
-    { id: 110, name: 'Tarea 10', activityId: 3 },
-    { id: 111, name: 'Tarea 11', activityId: 3 },
-  ];
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [visibleTasks, setVisibleTasks] = useState(5);
 
   // Filtra las tareas que correspondan a la actividad seleccionada
   const filteredTasks = selectedActivity
-    ? tasks.filter(task => task.activityId === selectedActivity.id)
+    ? dataAccreditation.filter(task => task?.actividad === selectedActivity?.actividad)
     : [];
 
   // Función para cargar 5 tareas más
@@ -104,6 +96,48 @@ export default function Quality() {
   const handleCerrarModal = () => {
     setModalAbierto(false);
   };
+
+  const calcularPorcentaje = (meta) => {
+    const regex = /V(\d+):\s*(\d+)/g;
+    let match;
+    let v1, v2;
+  
+    while ((match = regex.exec(meta)) !== null) {
+      const variable = match[1]; 
+      const valor = Number(match[2]);
+      if (variable === "1") {
+        v1 = valor;
+      } else if (variable === "2") {
+        v2 = valor;
+      }
+    }
+  
+    if (v1 === undefined || v2 === undefined) {
+      return 0
+    }
+    if (v2 === 0) {
+      return 0
+    }
+  
+    return (v1 / v2) * 100;
+  }
+
+  function getUniqueActivities(options) {
+    return options.filter((option, index, self) =>
+      index === self.findIndex((o) => o?.actividad === option?.actividad)
+    );
+  }  
+  
+  useMemo(() => {
+    if (oportunidad === "") return
+    setIndicador(activities[oportunidad]['indicador'])
+    setFormula(activities[oportunidad]['formula'])
+    setProgress(calcularPorcentaje(activities[oportunidad]['meta planeada para cada variable']))
+    setActivitiesSelect(dataAccreditation?.filter((item) => {
+        return (String(item?.oportunida_de_mejora).toLowerCase() === 
+        String(activities[oportunidad]['oportunidad de mejora']).toLowerCase())
+    }))
+  },[oportunidad])
 
   return (
     <Fragment>
@@ -208,27 +242,33 @@ export default function Quality() {
                         value={oportunidad}
                         label="Oportunidad de Mejora"
                         onChange={(e) => setOportunidad(e.target.value)}
-                        sx={{ height: 50 }}
+                        sx={{ height: 50, color: 'black' }}
                     >
-                        <MenuItem value="oportunidad1">Mejorar procesos académicos</MenuItem>
-                        <MenuItem value="oportunidad2">Actualizar infraestructura</MenuItem>
-                        <MenuItem value="oportunidad3">Fortalecer investigación</MenuItem>
+                      {
+                          opportunityImprovement?.length > 0 && 
+                          opportunityImprovement?.map((item, index) => {
+                              return (
+                                <MenuItem key={index} value={index}>
+                                  {item}
+                                </MenuItem>
+                              )
+                          })
+                      }
                     </Select>
                     </FormControl>
 
                     <FormControl fullWidth sx={{ flex: 1, minWidth: 240, height: 40 }}>
-                    <InputLabel id="indicador-label">Indicador</InputLabel>
-                    <Select
-                        labelId="indicador-label"
-                        value={indicador}
+                    <TextField
                         label="Indicador"
-                        onChange={(e) => setIndicador(e.target.value)}
-                        sx={{ height: 50 }}
-                    >
-                        <MenuItem value="indicador1">Tasa de graduación</MenuItem>
-                        <MenuItem value="indicador2">Publicaciones científicas</MenuItem>
-                        <MenuItem value="indicador3">Satisfacción estudiantil</MenuItem>
-                    </Select>
+                        variant="outlined"
+                        value={indicador}
+                        onChange={(e) => setFormula(e.target.value)}
+                        InputProps={{
+                        sx: {
+                            height: 50
+                        }
+                        }}
+                    />
                     </FormControl>
 
                     <FormControl fullWidth sx={{ flex: 1, minWidth: 240, height: 40 }}>
@@ -276,10 +316,11 @@ export default function Quality() {
                         }
                         action={
                             <Button
-                            variant="contained"
-                            startIcon={<Visibility />}
-                            onClick={handleAbrirModal}
-                            sx={{ backgroundColor: "#d32f2f", "&:hover": { backgroundColor: "#b71c1c" } }}
+                              disabled={oportunidad === ""}
+                              variant="contained"
+                              startIcon={<Visibility />}
+                              onClick={handleAbrirModal}
+                              sx={{ backgroundColor: "#d32f2f", "&:hover": { backgroundColor: "#b71c1c" } }}
                             >
                             Ver Resultado
                             </Button>
@@ -288,14 +329,15 @@ export default function Quality() {
                     <CardContent>
                       {/* Autocomplete para seleccionar actividad con búsqueda */}
                         <Autocomplete
-                            options={activities}
-                            getOptionLabel={(option) => option.nombre}
+                            disabled={oportunidad === ""}
+                            options={getUniqueActivities(activitiesSelect)}
+                            getOptionLabel={(option) => option?.actividad}
                             renderInput={(params) => (
                             <TextField {...params} label="Descripción de actividad" variant="outlined" fullWidth sx={{ mb: 3 }} />
                             )}
                             onChange={(event, newValue) => {
-                            setSelectedActivity(newValue);
-                            setVisibleTasks(5); // Reinicia el límite de tareas al cambiar de actividad
+                              setSelectedActivity(newValue);
+                              setVisibleTasks(5);
                             }}
                         />
 
@@ -303,7 +345,7 @@ export default function Quality() {
                         {selectedActivity && (
                             <>
                             <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
-                                Tareas para: {selectedActivity.nombre}
+                                Tareas para
                             </Typography>
                             <Table>
                                 <TableHead>
@@ -316,7 +358,7 @@ export default function Quality() {
                                 {filteredTasks.slice(0, visibleTasks).map(task => (
                                     <TableRow key={task.id}>
                                     <TableCell>{task.id}</TableCell>
-                                    <TableCell>{task.name}</TableCell>
+                                    <TableCell>{task?.tarea}</TableCell>
                                     </TableRow>
                                 ))}
                                 </TableBody>
@@ -346,7 +388,7 @@ export default function Quality() {
       <DetallesActividadModal
         open={modalAbierto}
         handleClose={handleCerrarModal}
-        actividad={selectedActivity}
+        actividad={activities[oportunidad]}
       />
     </Fragment>
   )
@@ -375,9 +417,7 @@ const DetallesActividadModal = ({ open, handleClose, actividad }) => {
             {/* Aquí puedes mostrar la información de la actividad */}
             {actividad ? (
               <>
-                <strong>Nombre:</strong> {actividad.nombre}
-                <br />
-                <strong>Descripción:</strong> {actividad.descripcion}
+                <strong>Descripción:</strong> {(actividad["descripción avance"])? actividad["descripción avance"] : 'No Hay descripción'}
                 {/* Agrega más campos según necesites */}
               </>
             ) : (
