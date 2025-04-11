@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   AppBar,
   Avatar,
@@ -25,6 +25,8 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Pagination,
+  Dialog, DialogTitle, DialogContent,
 } from "@mui/material"
 import {
   Add as AddIcon,
@@ -38,6 +40,7 @@ import { CompromisosPorPlazo } from "./compromisos-por-plazo"
 import { CompromisosPorResponsable } from "./compromisos-por-responsable"
 import { NuevoCompromisoDialog } from "./nuevo-compromiso-dialog"
 import ChevronDownIcon from "@mui/icons-material/KeyboardArrowDown"; 
+import CloseIcon from "@mui/icons-material/Close";
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -65,98 +68,66 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function Dashboard() {
-  const dataAgreements = useSelector((state) => state.moduleAgreements.agreements);
-  console.log(dataAgreements,"dataAgreements")
+  const dataAgreementsPrimary = useSelector((state) => state.moduleAgreements.agreements);
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSede, setSelectedSede] = useState("todas")
+  const [selectedSede, setSelectedSede] = useState("TODAS LAS SEDES")
   const [selectedEstado, setSelectedEstado] = useState("todos")
   const [selectedResponsable, setSelectedResponsable] = useState("todos")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedCompromiso, setSelectedCompromiso] = useState<any>(null)
+  const [dataAgreements] = useState(dataAgreementsPrimary?.filter((item) => item?.estado !== undefined))
   const [tabValue, setTabValue] = useState(0)
+  const [sedes, setSedes] = useState([])
 
-  // Datos de ejemplo
-  const compromisos = [
-    {
-      id: 1,
-      actividad: "Revisión de presupuesto anual",
-      fecha: "2025-04-15",
-      estado: "EN EJECUCIÓN",
-      plazo: "CORTO",
-      sede: "BUGA",
-      responsable: "Juan Pérez",
-      detalles: "Revisión del presupuesto para el año académico 2025-2026",
-      observaciones: "Se requiere finalizar antes del inicio del próximo semestre",
-    },
-    {
-      id: 2,
-      actividad: "Actualización de syllabus",
-      fecha: "2025-05-20",
-      estado: "PENDIENTE",
-      plazo: "MEDIANO",
-      sede: "CALI",
-      responsable: "María López",
-      detalles: "Actualización de contenidos programáticos de las asignaturas",
-      observaciones: "Pendiente aprobación del comité académico",
-    },
-    {
-      id: 3,
-      actividad: "Mantenimiento de laboratorios",
-      fecha: "2025-03-10",
-      estado: "FINALIZADO",
-      plazo: "CORTO",
-      sede: "BUGA",
-      responsable: "Carlos Rodríguez",
-      detalles: "Mantenimiento preventivo de equipos de laboratorio",
-      observaciones: "Se completó satisfactoriamente",
-    },
-    {
-      id: 4,
-      actividad: "Implementación de nuevo sistema",
-      fecha: "2025-08-30",
-      estado: "EN EJECUCIÓN",
-      plazo: "LARGO",
-      sede: "PALMIRA",
-      responsable: "Ana Martínez",
-      detalles: "Implementación del nuevo sistema de gestión académica",
-      observaciones: "En fase de pruebas con usuarios piloto",
-    },
-    {
-      id: 5,
-      actividad: "Capacitación docente",
-      fecha: "2025-06-15",
-      estado: "PENDIENTE",
-      plazo: "MEDIANO",
-      sede: "BUGA",
-      responsable: "Juan Pérez",
-      detalles: "Capacitación en nuevas metodologías pedagógicas",
-      observaciones: "Por definir fechas específicas",
-    },
-  ]
+  useEffect(() => {
+    if (dataAgreements?.length) {
+      const sedesUnicas = [...new Set(dataAgreements.map(item => item['sedes/nodos']))]
+      setSedes(sedesUnicas)
+    }
+  }, [dataAgreements])
+
+  console.log(sedes,"dataAgreements")
 
   // Filtrar compromisos según los criterios seleccionados
-  const filteredCompromisos = compromisos.filter((compromiso) => {
-    const matchesSede = selectedSede === "todas" || compromiso.sede === selectedSede
-    const matchesEstado = selectedEstado === "todos" || compromiso.estado === selectedEstado
-    const matchesResponsable = selectedResponsable === "todos" || compromiso.responsable === selectedResponsable
+  const filteredCompromisos = dataAgreements.filter((compromiso) => {
+    const matchesSede = selectedSede === "todas" || compromiso?.['sedes/nodos'] === selectedSede
+    const matchesEstado = selectedEstado === "todos" || compromiso?.estado === selectedEstado
+    const matchesResponsable = selectedResponsable === "todos" || compromiso?.['responsable 1'] === selectedResponsable
     const matchesSearch =
       searchQuery === "" ||
       compromiso.actividad.toLowerCase().includes(searchQuery.toLowerCase()) ||
       compromiso.detalles.toLowerCase().includes(searchQuery.toLowerCase())
 
-    return matchesSede && matchesEstado && matchesResponsable && matchesSearch
+    return matchesSede && matchesEstado && matchesResponsable
   })
 
   // Estadísticas para KPIs
-  const totalCompromisos = compromisos.length
-  const compromisosEnEjecucion = compromisos.filter((c) => c.estado === "EN EJECUCIÓN").length
-  const compromisosPendientes = compromisos.filter((c) => c.estado === "PENDIENTE").length
-  const compromisosFinalizados = compromisos.filter((c) => c.estado === "FINALIZADO").length
-
-  // Porcentajes para Progress
-  const porcentajeEjecucion = (compromisosEnEjecucion / totalCompromisos) * 100
-  const porcentajePendientes = (compromisosPendientes / totalCompromisos) * 100
-  const porcentajeFinalizados = (compromisosFinalizados / totalCompromisos) * 100
+// Para los KPIs: aplicar los filtros de sede y responsable, pero no el de estado (ya que queremos agrupar todos los estados)
+const dataForKPI = dataAgreements.filter((compromiso) => {
+    const matchesSede = selectedSede === "TODAS LAS SEDES" || compromiso?.['sedes/nodos'] === selectedSede;
+    const matchesResponsable = selectedResponsable === "todos" || compromiso?.['responsable 1'] === selectedResponsable;
+    return matchesSede
+  });
+  
+  // Estadísticas para KPIs usando el array filtrado por sede y responsable
+  const totalCompromisosFiltered = dataForKPI.length;
+  const compromisosEnEjecucion = dataForKPI.filter((item) => item?.estado === "EN EJECUCIÓN").length;
+  const compromisosPendientes = dataForKPI.filter((item) => item?.estado === "PENDIENTE").length;
+  const compromisosFinalizados = dataForKPI.filter((item) => item?.estado === "CERRADO").length;
+  
+  // Porcentajes para Progress (asegurarte de que totalCompromisosFiltered no sea 0 para evitar NaN)
+  const porcentajeEjecucion =
+    totalCompromisosFiltered > 0
+      ? (compromisosEnEjecucion / totalCompromisosFiltered) * 100
+      : 0;
+  const porcentajePendientes =
+    totalCompromisosFiltered > 0
+      ? (compromisosPendientes / totalCompromisosFiltered) * 100
+      : 0;
+  const porcentajeFinalizados =
+    totalCompromisosFiltered > 0
+      ? (compromisosFinalizados / totalCompromisosFiltered) * 100
+      : 0;
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue)
@@ -188,6 +159,18 @@ export default function Dashboard() {
     }
   }
 
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 6;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const paginatedData = filteredCompromisos.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
   return (
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
@@ -195,7 +178,8 @@ export default function Dashboard() {
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
             <Box>
               <Typography variant="h4" component="h2" fontWeight="bold">
-                Seguimiento de Compromisos y Acuerdos – BUGA
+                Seguimiento de Compromisos y Acuerdos
+                {selectedSede === 'TODAS LAS SEDES'? '' : `- ${selectedSede}`}
               </Typography>
               <Typography color="text.secondary">
                 {new Date().toLocaleDateString("es-ES", {
@@ -237,11 +221,11 @@ export default function Dashboard() {
                   En Ejecución
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
-                  {dataAgreements?.filter((item) => item?.estado === "EN EJECUCIÓN")?.length}
+                  {compromisosEnEjecucion}
                 </Typography>
                 <LinearProgress variant="determinate" value={porcentajeEjecucion} sx={{ my: 1 }} />
                 <Typography variant="caption" color="text.secondary">
-                  {((dataAgreements?.filter((item) => item?.estado === "EN EJECUCIÓN")?.length) / (dataAgreements?.length)) * 100}% del total
+                    {Number(((porcentajeEjecucion) * 100).toFixed(2))}% del total
                 </Typography>
               </Paper>
             </Grid>
@@ -251,11 +235,11 @@ export default function Dashboard() {
                   Pendientes
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
-                {dataAgreements?.filter((item) => item?.estado === "PENDIENTE")?.length}
+                    {compromisosPendientes}
                 </Typography>
                 <LinearProgress variant="determinate" value={porcentajePendientes} sx={{ my: 1 }} />
                 <Typography variant="caption" color="text.secondary">
-                {((dataAgreements?.filter((item) => item?.estado === "PENDIENTE")?.length) / (dataAgreements?.length)) * 100}% del total
+                {(Number(porcentajePendientes).toFixed(2))}% del total
                 </Typography>
               </Paper>
             </Grid>
@@ -265,11 +249,11 @@ export default function Dashboard() {
                   Finalizados
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
-                {dataAgreements?.filter((item) => item?.estado === "CERRADO")?.length}
+                    {compromisosFinalizados}
                 </Typography>
                 <LinearProgress variant="determinate" value={porcentajeFinalizados} sx={{ my: 1 }} color="success" />
                 <Typography variant="caption" color="text.secondary">
-                {((dataAgreements?.filter((item) => item?.estado === "CERRADO")?.length) / (dataAgreements?.length)) * 100}% del total
+                {(Number(porcentajeFinalizados).toFixed(2))}% del total
                 </Typography>
               </Paper>
             </Grid>
@@ -288,7 +272,6 @@ export default function Dashboard() {
                     variant="outlined"
                     fullWidth
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -307,9 +290,11 @@ export default function Dashboard() {
                       onChange={(e) => setSelectedSede(e.target.value)}
                     >
                       <MenuItem value="todas">Todas las sedes</MenuItem>
-                      <MenuItem value="BUGA">BUGA</MenuItem>
-                      <MenuItem value="CALI">CALI</MenuItem>
-                      <MenuItem value="PALMIRA">PALMIRA</MenuItem>
+                      {sedes.map((sede, index) => (
+                            <MenuItem key={index} value={sede}>
+                            {sede}
+                        </MenuItem>
+                     ))}
                     </Select>
                   </FormControl>
 
@@ -435,30 +420,30 @@ export default function Dashboard() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {filteredCompromisos.map((compromiso) => (
+                  <tbody key="a">
+                    {paginatedData.map((compromiso) => (
                       <tr
                         key={compromiso.id}
                         onClick={() => setSelectedCompromiso(compromiso)}
                         style={{ cursor: "pointer", "&:hover": { backgroundColor: "rgba(0,0,0,0.04)" } }}
                       >
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
-                          <Typography fontWeight="medium">{compromiso.actividad}</Typography>
+                          <Typography fontWeight="medium">{compromiso['compromisos / acuerdos'] ?? 'No tiene Compromiso'}</Typography>
                         </td>
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
-                          {new Date(compromiso.fecha).toLocaleDateString("es-ES")}
+                          {compromiso['fecha de seguimiento'] ?? 'No definida'}
                         </td>
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
                           {getEstadoChip(compromiso.estado)}
                         </td>
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
-                          {compromiso.sede}
+                          {compromiso['sedes/nodos']}
                         </td>
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
-                          {compromiso.responsable}
+                          {compromiso['responsable 1']}
                         </td>
                         <td style={{ padding: "12px 16px", borderBottom: "1px solid rgba(0,0,0,0.12)" }}>
-                          {getPlazoChip(compromiso.plazo)}
+                          {getPlazoChip(compromiso['plazo de ejecución'] || 'No Definido')}
                         </td>
                         <td
                           style={{
@@ -476,82 +461,91 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               )}
+                          {/* Paginación */}
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <Pagination
+                count={Math.ceil(filteredCompromisos.length / rowsPerPage)}
+                page={page}
+                onChange={handleChangePage}
+                color="primary"
+              />
+            </Box>
             </Box>
           </Paper>
 
-          {/* Panel de Detalles */}
-          {selectedCompromiso && (
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <Box>
-                  <Typography variant="h6">Detalles del Compromiso</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {selectedCompromiso.actividad}
-                  </Typography>
-                </Box>
-                <IconButton sx={{ ml: "auto" }} onClick={() => setSelectedCompromiso(null)}>
-                  <ChevronDownIcon />
-                </IconButton>
-              </Box>
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-                    Información General
-                  </Typography>
-                  <Box sx={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 1 }}>
-                    <Typography variant="body2" fontWeight="medium">
-                      Fecha:
-                    </Typography>
-                    <Typography variant="body2">
-                      {new Date(selectedCompromiso.fecha).toLocaleDateString("es-ES")}
-                    </Typography>
+          <Dialog
+                open={Boolean(selectedCompromiso)}
+                onClose={() => setSelectedCompromiso(null)}
+                fullWidth
+                maxWidth="md" // puedes cambiar a "sm" o "lg"
+                >
+                <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
+                    Detalles del Compromiso
+                    <IconButton sx={{ ml: "auto" }} onClick={() => setSelectedCompromiso(null)}>
+                    <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent dividers>
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                            <Box>
+                            <Typography variant="body2" color="text.secondary">
+                                {selectedCompromiso?.['compromisos / acuerdos'] || ''}
+                            </Typography>
+                            </Box>
+                        </Box>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12} md={6}>
+                            <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                                Información General
+                            </Typography>
+                            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 1 }}>
+                                <Typography variant="body2" fontWeight="medium">
+                                Fecha:
+                                </Typography>
+                                <Typography variant="body2">
+                                {selectedCompromiso?.['fecha de seguimiento'] || ''}
+                                </Typography>
 
-                    <Typography variant="body2" fontWeight="medium">
-                      Estado:
-                    </Typography>
-                    <Box>{getEstadoChip(selectedCompromiso.estado)}</Box>
+                                <Typography variant="body2" fontWeight="medium">
+                                Estado:
+                                </Typography>
+                                <Box>{getEstadoChip(selectedCompromiso?.estado)}</Box>
 
-                    <Typography variant="body2" fontWeight="medium">
-                      Sede:
-                    </Typography>
-                    <Typography variant="body2">{selectedCompromiso.sede}</Typography>
+                                <Typography variant="body2" fontWeight="medium">
+                                Sede:
+                                </Typography>
+                                <Typography variant="body2">{selectedCompromiso?.['sedes/nodos']}</Typography>
 
-                    <Typography variant="body2" fontWeight="medium">
-                      Responsable:
-                    </Typography>
-                    <Typography variant="body2">{selectedCompromiso.responsable}</Typography>
+                                <Typography variant="body2" fontWeight="medium">
+                                Responsable:
+                                </Typography>
+                                <Typography variant="body2">{selectedCompromiso?.['responsable 1']}</Typography>
 
-                    <Typography variant="body2" fontWeight="medium">
-                      Plazo:
-                    </Typography>
-                    <Box>{getPlazoChip(selectedCompromiso.plazo)}</Box>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-                    Detalles y Observaciones
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" fontWeight="medium">
-                      Detalles:
-                    </Typography>
-                    <Typography variant="body2" paragraph>
-                      {selectedCompromiso.detalles}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" fontWeight="medium">
-                      Observaciones:
-                    </Typography>
-                    <Typography variant="body2">{selectedCompromiso.observaciones}</Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-                <Button variant="outlined">Editar</Button>
-              </Box>
-            </Paper>
-          )}
+                                <Typography variant="body2" fontWeight="medium">
+                                Plazo:
+                                </Typography>
+                                <Box>{getPlazoChip(selectedCompromiso?.['plazo de ejecución'] || '')}</Box>
+                            </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                            <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                                Detalles y Observaciones
+                            </Typography>
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body2" fontWeight="medium">
+                                Detalles:
+                                </Typography>
+                                <Typography variant="body2" sx={{ display: 'flex'}}>
+                                {selectedCompromiso?.['observaciones']}
+                                </Typography>
+                            </Box>
+                            </Grid>
+                        </Grid>
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                            <Button variant="outlined">Editar</Button>
+                        </Box>
+                </DialogContent>
+         </Dialog>
         </Container>
       </Box>
   )
