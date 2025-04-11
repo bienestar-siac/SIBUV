@@ -8,7 +8,7 @@ const styles: Styles = {
     },
     contLogo: { 
         display: "flex", 
-        alignItems: "center", 
+        alignItems: "left", 
         flexGrow: 1 
     },
     contCardImg: { 
@@ -38,7 +38,7 @@ const styles: Styles = {
         padding: '10px',
     },
     cardModules: {
-        height: "100%",
+        height: "160px",
         display: "flex",
         // flexDirection: "column",
         cursor: "pointer",

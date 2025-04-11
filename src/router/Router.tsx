@@ -9,6 +9,7 @@ const ModuleWorkerProcess = lazy(() => import("../pages/WorkerProcess/index.tsx"
 const ModuleWorkerPlan = lazy(() => import("../pages/WorkPlan/index.tsx"));
 const GestionReport = lazy(() => import("../pages/GestionReport/index.tsx"));
 const ModuleQuality = lazy(() => import("../pages/ModuleQuality/index.tsx"));
+const ModuleAgreements = lazy(() => import("../pages/ModuleAgreements/index.tsx"));
 
 export default [
   { path: "/", element: <Home />, isAuth: false },
@@ -18,5 +19,6 @@ export default [
   { path: '/module/process/:route/:tool', element: <ModuleWorkerPlan />, isAuth: true},
   { path: '/module/informe-de-gestion', element: <GestionReport />, isAuth: true},
   { path: '/module/sistema-interno-de-aseguramiento-de-calidad', element: <ModuleQuality />, isAuth: true},
+  { path: '/module/seguimiento-de-compromisos-y-acuerdos', element: <ModuleAgreements />, isAuth: true},
   { path: "*", element: <NoFound />, isAuth: false },
 ];

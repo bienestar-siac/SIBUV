@@ -47,7 +47,7 @@ export default function SectionModules() {
             Módulos
           </Typography>
   
-          <Grid container spacing={4} justifyContent="center">
+          <Grid container spacing={4} justifyContent="left">
             {modules.map((module, index) => (
               <Grid onClick={() => handlerActions(module.path)} item xs={12} sm={6} md={4} key={index}>
                 <Card sx={{
@@ -65,6 +65,7 @@ export default function SectionModules() {
                         sx={{
                           color: module.color,
                           fontWeight: "bold",
+                          fontSize: index == 3 && '20px',
                           mb: 2,
                         }}
                       >

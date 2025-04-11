@@ -20,4 +20,11 @@ export default [
       color: "#F44336",
       path: '/module/informe-de-gestion',
     },
+    {
+      title: "SEGUIMIENTO DE COMPROMISOS Y ACUERDOS",
+      subtitle: "Procesos Internos de Bienestar Universitario",
+      icon: "/icons/4.png",
+      color: "#F44336",
+      path: '/module/seguimiento-de-compromisos-y-acuerdos',
+    },
 ]
