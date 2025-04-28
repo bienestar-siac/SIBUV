@@ -22,7 +22,7 @@ export default function Filter() {
                 component="div"
                 sx={styles.titleModule}
             >
-                Módulos por Procesos
+                Módulos por Sub Procesos
             </Typography>
             <FilterMenu />
         </Box>

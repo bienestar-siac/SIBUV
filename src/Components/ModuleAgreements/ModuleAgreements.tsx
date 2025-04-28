@@ -138,7 +138,7 @@ const dataForKPI = dataAgreements.filter((compromiso) => {
       case "FINALIZADO":
         return <Chip label={estado} color="success" />
       case "EN EJECUCIÓN":
-        return <Chip label={estado} color="primary" />
+        return <Chip label={estado} sx={{ backgroundColor: '#eb3e26', color: 'white'}} />
       case "PENDIENTE":
         return <Chip label={estado} variant="outlined" />
       default:
@@ -191,7 +191,7 @@ const dataForKPI = dataAgreements.filter((compromiso) => {
               </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setIsDialogOpen(true)}>
+              <Button sx={{ backgroundColor: '#eb3e26'}} variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setIsDialogOpen(true)}>
                 Nuevo Compromiso
               </Button>
               <Button variant="outlined" startIcon={<RefreshIcon />}>

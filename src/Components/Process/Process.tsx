@@ -26,7 +26,7 @@ export default function ModuleProcess() {
     return (
       <Box sx={{ flexGrow: 1, p: 3 }}>
           <Typography sx={{ display: 'grid', placeContent: 'center'}} variant="h6">
-             Cargando Procesos...
+             Cargando Sub Procesos...
           </Typography>
       </Box>
     )

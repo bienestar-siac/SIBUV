@@ -1,7 +1,7 @@
 export default [
     {
-      title: "PROCESOS",
-      subtitle: "Procesos Internos de Bienestar Universitario",
+      title: "SUB PROCESOS",
+      subtitle: "Sub Procesos Internos de Bienestar Universitario",
       icon:  "/icons/1.png",
       color: "#F44336",
       path: '/module/process',
