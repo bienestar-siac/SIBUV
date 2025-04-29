@@ -65,7 +65,8 @@ export default function SectionModules() {
                         sx={{
                           color: module.color,
                           fontWeight: "bold",
-                          fontSize: index == 3 && '20px',
+                          fontSize: (index == 3)? '17px' : (index == 1) && '20px',
+                          lineHeight: 1,
                           mb: 2,
                         }}
                       >

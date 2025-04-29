@@ -24,11 +24,14 @@ export default function Router() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const session = useSelector((state) => state.session);
+    const path = window?.location?.pathname
 
     const init = () => {
         const data = getDecryptedCookie('session_vbu')
         if (data?.id) {
             dispatch(setSession({ isAuth: true, user: data }));
+            if (path === '/')
+                navigate('/modules')
         }
     }
 

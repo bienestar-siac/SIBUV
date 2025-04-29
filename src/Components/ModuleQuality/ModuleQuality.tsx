@@ -58,17 +58,20 @@ function TabPanel(props: TabPanelProps) {
 
 export default function Quality() {
   const dataAccreditation = useSelector((state) => state.moduleQuality.accreditation);
-  const activitiesData = useSelector((state) => state.moduleQuality.activitys);
-  console.log(activitiesData)
+  const activitiesData = useSelector((state) => state.moduleQuality.activitys)
   const [tabValue, setTabValue] = useState(0)
   const [oportunidad, setOportunidad] = useState("")
   const [indicador, setIndicador] = useState("")
   const [formula, setFormula] = useState("")
   const [progress, setProgress] = useState(0)
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [activities, setActivities] = useState(activitiesData)
-  const [opportunityImprovement] = useState(activitiesData.map((item, index) => index > 0 && item["oportunidad de mejora"]))
-  
+  const [activities, setActivities] = useState(activitiesData.filter((item, index) => index > 0 ))
+  const [opportunityImprovement] = useState(
+    activitiesData.map(
+      (item, index) => index > 0 && item?.["oportunidad de mejora"]
+   ).filter((item) => item !== false)
+  )
+
   // Usar improvementOpportunity en el filtro
   const [activitiesSelect, setActivitiesSelect] = useState([]);
 
@@ -111,7 +114,11 @@ export default function Quality() {
         v2 = valor;
       }
     }
-  
+
+    if (typeof v1 === 'number' && v2 === undefined) {
+         return 100 
+    }
+
     if (v1 === undefined || v2 === undefined) {
       return 0
     }
@@ -126,17 +133,22 @@ export default function Quality() {
     return options.filter((option, index, self) =>
       index === self.findIndex((o) => o?.actividad === option?.actividad)
     );
-  }  
+  }
+
+  const handlerChangeOportunity = (e) => {
+    setOportunidad(e.target.value)
+  }
   
   useMemo(() => {
     if (oportunidad === "") return
     setIndicador(activities[oportunidad]['indicador'])
     setFormula(activities[oportunidad]['formula'])
-    setProgress(calcularPorcentaje(activities[oportunidad]['meta planeada para cada variable']))
+    setProgress(calcularPorcentaje(activities?.[oportunidad]?.['meta planeada para cada variable']))
     setActivitiesSelect(dataAccreditation?.filter((item) => {
         return (String(item?.oportunida_de_mejora).toLowerCase() === 
-        String(activities[oportunidad]['oportunidad de mejora']).toLowerCase())
+        String(activities?.[oportunidad]?.['oportunidad de mejora']).toLowerCase() && activities[oportunidad]['oportunidad de mejora'] !== "")
     }))
+    setSelectedActivity(null)
   },[oportunidad])
 
   return (
@@ -241,7 +253,7 @@ export default function Quality() {
                         labelId="oportunidad-label"
                         value={oportunidad}
                         label="Oportunidad de Mejora"
-                        onChange={(e) => setOportunidad(e.target.value)}
+                        onChange={handlerChangeOportunity}
                         sx={{ height: 50, color: 'black' }}
                     >
                       {
@@ -327,13 +339,12 @@ export default function Quality() {
                         }
                     />
                     <CardContent>
-                      {/* Autocomplete para seleccionar actividad con búsqueda */}
                         <Autocomplete
                             disabled={oportunidad === ""}
                             options={getUniqueActivities(activitiesSelect)}
                             getOptionLabel={(option) => option?.actividad}
                             renderInput={(params) => (
-                            <TextField {...params} label="Descripción de actividad" variant="outlined" fullWidth sx={{ mb: 3 }} />
+                            <TextField {...params}  label="Descripción de actividad" variant="outlined" fullWidth sx={{ mb: 3 }} />
                             )}
                             onChange={(event, newValue) => {
                               setSelectedActivity(newValue);
@@ -341,7 +352,6 @@ export default function Quality() {
                             }}
                         />
 
-                        {/* Solo se muestran las tareas si se seleccionó una actividad */}
                         {selectedActivity && (
                             <>
                             <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
@@ -414,11 +424,9 @@ const DetallesActividadModal = ({ open, handleClose, actividad }) => {
         </DialogTitle>
         <DialogContent dividers>
           <DialogContentText>
-            {/* Aquí puedes mostrar la información de la actividad */}
             {actividad ? (
               <>
-                <strong>Descripción:</strong> {(actividad["descripción avance"])? actividad["descripción avance"] : 'No Hay descripción'}
-                {/* Agrega más campos según necesites */}
+                <strong>Descripción:</strong> {(actividad["descripción avance"])? actividad["descripción avance"] : 'No esta asignado para esta vigencia'}
               </>
             ) : (
               'No hay actividad seleccionada'
@@ -432,4 +440,4 @@ const DetallesActividadModal = ({ open, handleClose, actividad }) => {
         </DialogActions>
       </Dialog>
     );
-  };
+};
