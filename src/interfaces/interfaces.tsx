@@ -1,3 +1,4 @@
+import type React from "react"
 
 export type ShowType = {
     when: boolean
@@ -21,4 +22,10 @@ export interface Informe {
     fecha: string
     editor: string
     estado: "completado" | "pendiente" | "revisión"
+}
+
+export interface TabPanelProps {
+    children?: React.ReactNode
+    index: number
+    value: number
 }
