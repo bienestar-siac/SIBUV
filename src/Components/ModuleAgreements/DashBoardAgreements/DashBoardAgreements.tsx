@@ -38,7 +38,7 @@ export default function DashBoardAgreements({
         <Grid container spacing={3} sx={{ mb: 3 }}>
             {/* Filtros */}
             <Grid item xs={12} md={4}>
-                <Paper elevation={2} sx={{ p: 3 }}>
+                <Paper elevation={2} sx={{ p: 3, height: '500px' }}>
                     <Typography variant="h6" gutterBottom>
                         Filtros
                     </Typography>
@@ -117,7 +117,7 @@ export default function DashBoardAgreements({
 
             {/* Gráficos */}
             <Grid item xs={12} md={8}>
-                <Paper elevation={2} sx={{ p: 3 }}>
+                <Paper elevation={2} sx={{ p: 3, height: '500px' }}>
                     <Typography variant="h6" gutterBottom>
                         Visualización
                     </Typography>

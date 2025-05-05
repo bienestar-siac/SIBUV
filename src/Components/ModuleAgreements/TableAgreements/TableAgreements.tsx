@@ -69,10 +69,10 @@ export default function TableAgreements({
                         </th>
                         </tr>
                     </thead>
-                    <tbody >
-                        {paginatedData.map((compromiso) => (
+                    <tbody>
+                        {paginatedData.map((compromiso, index) => (
                         <tr
-                            key={compromiso.id}
+                            key={index}
                             onClick={() => setSelectedCompromiso(compromiso)}
                             style={styles.bodyTr}
                         >

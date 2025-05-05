@@ -41,7 +41,7 @@ export default function TotalAgreements({
                     </Typography>
                     <LinearProgress variant="determinate" value={porcentajeEjecucion} sx={{ my: 1 }} />
                     <Typography variant="caption" color="text.secondary">
-                        {Number(((porcentajeEjecucion) * 100).toFixed(2))}% del total
+                        {Number(((porcentajeEjecucion)).toFixed(2))}% del total
                     </Typography>
                 </Paper>
             </Grid>
