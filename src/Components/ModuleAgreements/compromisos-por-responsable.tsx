@@ -20,7 +20,19 @@ const data = [
   },
 ]
 
-export function CompromisosPorResponsable() {
+export default function CompromisosPorResponsable({ filteredCompromisos }) {
+  const uniquePlazos = ([...new Set(filteredCompromisos.map(item => item?.['responsable 1']))]).filter((item) => {
+    return item !== ''
+  })
+
+  const data = uniquePlazos?.map((item) => {
+    return {
+       name: item,
+       total: filteredCompromisos?.filter((agreements) => {
+           return agreements?.['responsable 1'] === item
+       })?.length
+    }
+  })
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>

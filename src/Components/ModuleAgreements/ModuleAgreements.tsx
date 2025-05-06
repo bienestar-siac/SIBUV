@@ -68,12 +68,19 @@ export default function Dashboard() {
     filteredCompromisos,
     rowsPerPage,
     setSedes,
+    responsablesList,
+    setResponsablesList,
+    totalCompromisosFiltered
   } = Handlers(dataAgreementsPrimary);
 
   useEffect(() => {
     if (dataAgreements?.length) {
       const sedesUnicas = [...new Set(dataAgreements.map(item => item['sedes/nodos']))]
+      const uniqueResponsables = ([...new Set(dataAgreements.map(item => item?.['responsable 1']))]).filter((item) => {
+        return item !== ''
+      })
       setSedes(sedesUnicas)
+      setResponsablesList(uniqueResponsables)
     }
   }, [dataAgreements])
 
@@ -115,6 +122,7 @@ export default function Dashboard() {
             compromisosFinalizados,
             porcentajeFinalizados,
             compromisosPendientes,
+            totalCompromisosFiltered,
           }}/>
 
           <DashBoardAgreements {...{
@@ -128,6 +136,9 @@ export default function Dashboard() {
               setSelectedResponsable,
               handleTabChange,
               tabValue,
+              filteredCompromisos,
+              responsablesList,
+              setResponsablesList,
           }} />
 
           {/* Tabla de Compromisos */}

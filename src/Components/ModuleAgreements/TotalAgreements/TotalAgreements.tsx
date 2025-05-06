@@ -14,7 +14,8 @@ export default function TotalAgreements({
     porcentajePendientes,
     compromisosFinalizados,
     porcentajeFinalizados,
-    compromisosPendientes
+    compromisosPendientes,
+    totalCompromisosFiltered,
 }) {
     return (
         <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -24,7 +25,7 @@ export default function TotalAgreements({
                         Total Compromisos
                     </Typography>
                     <Typography variant="h4" fontWeight="bold">
-                        {dataAgreements?.length}
+                        {totalCompromisosFiltered}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                         Compromisos registrados

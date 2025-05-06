@@ -1,22 +1,26 @@
 "use client"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { 
+  Bar, 
+  BarChart,
+  ResponsiveContainer, 
+  XAxis, 
+  YAxis, 
+  Tooltip 
+} from "recharts"
 
-const data = [
-  {
-    name: "En Ejecución",
-    total: 2,
-  },
-  {
-    name: "Pendiente",
-    total: 2,
-  },
-  {
-    name: "Finalizado",
-    total: 1,
-  },
-]
-
-export function CompromisosPorEstado() {
+export default function CompromisosPorEstado({
+  filteredCompromisos,
+  sedes
+}) {
+  const data = sedes?.map((item) => {
+      return {
+         name: item,
+         total: filteredCompromisos?.filter((agreements) => {
+             return agreements?.['sedes/nodos'] === item
+         })?.length
+      }
+  })
+  
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>

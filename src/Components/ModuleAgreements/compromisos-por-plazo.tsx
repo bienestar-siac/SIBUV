@@ -1,24 +1,31 @@
 "use client"
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, Legend } from "recharts"
-
-const data = [
-  {
-    name: "Corto",
-    value: 2,
-  },
-  {
-    name: "Mediano",
-    value: 2,
-  },
-  {
-    name: "Largo",
-    value: 1,
-  },
-]
+import { 
+  Cell, 
+  Pie, 
+  PieChart, 
+  ResponsiveContainer, 
+  Tooltip, 
+  Legend 
+} from "recharts"
 
 const COLORS = ["#4caf50", "#ff9800", "#f44336"]
 
-export function CompromisosPorPlazo() {
+export default function CompromisosPorPlazo({
+  filteredCompromisos,
+}) {
+  const uniquePlazos = ([...new Set(filteredCompromisos.map(item => item?.['plazo de ejecución']))]).filter((item) => {
+    return item !== ''
+  })
+
+  const data = uniquePlazos?.map((item) => {
+    return {
+       name: item,
+       value: filteredCompromisos?.filter((agreements) => {
+           return agreements?.['plazo de ejecución'] === item
+       })?.length
+    }
+  })
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>

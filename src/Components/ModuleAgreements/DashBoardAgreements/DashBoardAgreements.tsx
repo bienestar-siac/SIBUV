@@ -13,6 +13,9 @@ import {
     Tabs,
     Tab,
 } from "@mui/material"
+import CompromisosPorEstado from '../compromisos-por-estado'
+import CompromisosPorPlazo from '../compromisos-por-plazo'
+import CompromisosPorResponsable from '../compromisos-por-responsable'
 
 // Material Icons
 import {
@@ -33,6 +36,9 @@ export default function DashBoardAgreements({
     setSelectedResponsable,
     handleTabChange,
     tabValue,
+    filteredCompromisos,
+    responsablesList,
+    setResponsablesList,
 }) {
     return (
         <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -43,7 +49,7 @@ export default function DashBoardAgreements({
                         Filtros
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <TextField
+                    {/* <TextField
                         label="Buscar compromiso"
                         variant="outlined"
                         fullWidth
@@ -55,7 +61,7 @@ export default function DashBoardAgreements({
                             </InputAdornment>
                         ),
                         }}
-                    />
+                    /> */}
 
                     <FormControl fullWidth>
                         <InputLabel id="sede-label">Sede/Nodo</InputLabel>
@@ -65,9 +71,9 @@ export default function DashBoardAgreements({
                             label="Sede/Nodo"
                             onChange={(e) => setSelectedSede(e.target.value)}
                         >
-                        <MenuItem value="todas">Todas las sedes</MenuItem>
+                            <MenuItem value="todas">Todas</MenuItem>
                             {sedes.map((sede, index) => (
-                                    <MenuItem key={index} value={sede}>
+                                <MenuItem key={index} value={sede}>
                                     {sede}
                                 </MenuItem>
                             ))}
@@ -85,7 +91,7 @@ export default function DashBoardAgreements({
                             <MenuItem value="todos">Todos los estados</MenuItem>
                             <MenuItem value="EN EJECUCIÓN">En ejecución</MenuItem>
                             <MenuItem value="PENDIENTE">Pendiente</MenuItem>
-                            <MenuItem value="FINALIZADO">Finalizado</MenuItem>
+                            <MenuItem value="CERRADO">Finalizado</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -97,18 +103,19 @@ export default function DashBoardAgreements({
                             label="Responsable"
                             onChange={(e) => setSelectedResponsable(e.target.value)}
                             >
-                            <MenuItem value="todos">Todos los responsables</MenuItem>
-                            <MenuItem value="Juan Pérez">Juan Pérez</MenuItem>
-                            <MenuItem value="María López">María López</MenuItem>
-                            <MenuItem value="Carlos Rodríguez">Carlos Rodríguez</MenuItem>
-                            <MenuItem value="Ana Martínez">Ana Martínez</MenuItem>
+                            <MenuItem value="todos">Todos los Responsables</MenuItem>
+                            {responsablesList.map((sede, index) => (
+                                <MenuItem key={index} value={sede}>
+                                    {sede}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
                     <Box>
-                        <Typography variant="subtitle2" gutterBottom>
+                        {/* <Typography variant="subtitle2" gutterBottom>
                             Rango de fechas
-                        </Typography>
+                        </Typography> */}
                         {/* <DatePickerWithRange /> */}
                     </Box>
                     </Box>
@@ -117,27 +124,38 @@ export default function DashBoardAgreements({
 
             {/* Gráficos */}
             <Grid item xs={12} md={8}>
-                <Paper elevation={2} sx={{ p: 3, height: '500px' }}>
+                <Paper elevation={2} sx={{ p: 3, height: '500px', position: 'relative' }}>
                     <Typography variant="h6" gutterBottom>
                         Visualización
                     </Typography>
                     <Box sx={{ width: "100%" }}>
                         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                             <Tabs value={tabValue} onChange={handleTabChange} aria-label="visualización tabs">
-                            <Tab label="Por Estado" />
+                            <Tab label="Por Sede" />
                             <Tab label="Por Plazo" />
                             <Tab label="Por Responsable" />
                             </Tabs>
                         </Box>
                         <TabPanel value={tabValue} index={0}>
-                            {/* <CompromisosPorEstado /> */}
+                            <CompromisosPorEstado {...{
+                                filteredCompromisos,
+                                sedes
+                            }}/>
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
-                            {/* <CompromisosPorPlazo /> */}
+                            <CompromisosPorPlazo {...{
+                                filteredCompromisos,
+                                sedes
+                            }}/>
                         </TabPanel>
                         <TabPanel value={tabValue} index={2}>
-                            {/* <CompromisosPorResponsable /> */}
+                            <CompromisosPorResponsable {...{
+                                filteredCompromisos,
+                            }}/>
                         </TabPanel>
+                    </Box>
+                    <Box sx={{ position: 'absolute', top: '10px', right: '10px'}}>
+                      <a style={{ color: '#eb3e26'}} href="https://lookerstudio.google.com/reporting/4cfa3bca-2b3f-4b22-8d54-234691b7141d" target="_blank">Ver Dashboard</a>
                     </Box>
                 </Paper>
             </Grid>

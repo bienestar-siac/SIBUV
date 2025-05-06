@@ -4,9 +4,10 @@ import Chip from '@mui/material/Chip'
 
 export default (dataAgreementsPrimary) => {
     const [searchQuery, setSearchQuery] = useState("")
-    const [selectedSede, setSelectedSede] = useState("TODAS LAS SEDES")
+    const [selectedSede, setSelectedSede] = useState("todas")
     const [selectedEstado, setSelectedEstado] = useState("todos")
     const [selectedResponsable, setSelectedResponsable] = useState("todos")
+    const [responsablesList, setResponsablesList] = useState([])
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [selectedCompromiso, setSelectedCompromiso] = useState<any>(null)
     const [dataAgreements] = useState(dataAgreementsPrimary?.filter((item) => item?.estado !== undefined))
@@ -29,10 +30,10 @@ export default (dataAgreementsPrimary) => {
     })
   
     // Estadísticas para KPIs
-  // Para los KPIs: aplicar los filtros de sede y responsable, pero no el de estado (ya que queremos agrupar todos los estados)
-  const dataForKPI = dataAgreements.filter((compromiso) => {
-      const matchesSede = selectedSede === "TODAS LAS SEDES" || compromiso?.['sedes/nodos'] === selectedSede;
-      const matchesResponsable = selectedResponsable === "todos" || compromiso?.['responsable 1'] === selectedResponsable;
+    // Para los KPIs: aplicar los filtros de sede y responsable, pero no el de estado (ya que queremos agrupar todos los estados)
+    const dataForKPI = dataAgreements.filter((compromiso) => {
+      const matchesSede = compromiso?.['sedes/nodos'] === selectedSede;
+      if (selectedSede === "todas") return true
       return matchesSede
     });
     
@@ -136,5 +137,8 @@ export default (dataAgreementsPrimary) => {
         filteredCompromisos,
         rowsPerPage,
         setSedes,
+        responsablesList,
+        setResponsablesList,
+        totalCompromisosFiltered
     };
 }
