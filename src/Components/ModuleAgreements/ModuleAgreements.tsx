@@ -17,6 +17,7 @@ import TotalAgreements from "./TotalAgreements/TotalAgreements"
 import DashBoardAgreements from "./DashBoardAgreements/DashBoardAgreements"
 import TableAgreements from './TableAgreements/TableAgreements'
 import ViewPopUpAgreements from './ViewPopUpAgreements/ViewPopUpAgreements'
+import CreatePopUpAgreements from './ViewPopUpAgreements/CreatePopUpAgreements'
 
 // Handlers
 import Handlers from './handler'
@@ -160,6 +161,14 @@ export default function Dashboard() {
             selectedCompromiso
           }}/>
 
+          <CreatePopUpAgreements {...{
+              open: isDialogOpen, 
+              onClose: () => setIsDialogOpen(false), 
+              onCreate: () => {}, 
+              sedes, 
+              estados: [], 
+              plazos: []
+          }}/>
         </Container>
       </Box>
   )
