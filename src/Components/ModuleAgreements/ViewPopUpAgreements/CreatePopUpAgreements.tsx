@@ -61,7 +61,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
             const save = await createAgreements({
                 sheet_name: "CONSOLIDADO",
                 spreadsheet_id: SPREEDSHEETID,
-                sede_nodos: form.sede,
+                sedes_nodos: form.sede,
                 compromisos: form.compromiso,
                 responsable_1: form.responsable1,
                 responsable_2: form.responsable2,
@@ -70,6 +70,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                 estado: form.estado,
                 plazo: form.plazo,
                 observaciones: form.observaciones,
+                origen: form?.origen,
             });
             if (save?.message) {
                 setStatus({ open: true, type: 'success', message: 'Acuerdo creado exitosamente' });
