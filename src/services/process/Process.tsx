@@ -21,3 +21,10 @@ export const generateDoc = (data) => {
         path: 'https://sibuvv.shop/server-pdf'
     })
 }
+
+export const createAgreements = (data) => {
+    return fetchPostGeneral({
+        dataSend: data, 
+        urlEndPoint: `/api/v1/sheets/create-agreements`,
+    })
+}

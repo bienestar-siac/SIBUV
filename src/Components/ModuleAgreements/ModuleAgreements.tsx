@@ -166,8 +166,8 @@ export default function Dashboard() {
               onClose: () => setIsDialogOpen(false), 
               onCreate: () => {}, 
               sedes, 
-              estados: [], 
-              plazos: []
+              estados: ['EN EJECUCIÓN', 'PENDIENTE', 'CERRADO'], 
+              plazos: ['Corto Plazo (1 a 3 meses)', 'Mediano plazo (3 a 6 meses)', 'Largo Plazo (más de 6 meses)']
           }}/>
         </Container>
       </Box>
