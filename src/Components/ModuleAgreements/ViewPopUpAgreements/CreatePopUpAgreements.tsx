@@ -134,7 +134,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                       size="small"
                       value={form.origen}
                       onChange={handleChange("origen")}
-                      placeholder="Seleccione el origen"
+                      label="Selecione el origen"
                       disabled={!origin}
                   >
                       <MenuItem value="">Seleccionar...</MenuItem>
@@ -149,6 +149,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                     fullWidth
                     size="small"
                     value={form.sede}
+                    label="Selecione la sede"
                     onChange={handleChange("sede")}
                   >
                     <MenuItem value="">Seleccionar...</MenuItem>
@@ -224,6 +225,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                     fullWidth
                     size="small"
                     value={form.estado}
+                    label="Selecione el Estado"
                     onChange={handleChange("estado")}
                   >
                     {estados.map((e) => (
@@ -237,6 +239,7 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                     fullWidth
                     size="small"
                     value={form.plazo}
+                    label="Selecione el Plazo"
                     onChange={handleChange("plazo")}
                   >
                     {plazos.map((p) => (
