@@ -27,4 +27,11 @@ export default [
       color: "#F44336",
       path: '/module/seguimiento-de-compromisos-y-acuerdos',
     },
+    {
+      title: "Inteligencia Artificial",
+      subtitle: "Procesos Internos de Bienestar Universitario",
+      icon: "/icons/5.png",
+      color: "#F44336",
+      path: '#',
+    },
 ]

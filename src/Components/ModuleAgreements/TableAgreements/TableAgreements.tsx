@@ -73,10 +73,7 @@ export default function TableAgreements({
                         {paginatedData.map((compromiso, index) => (
                         <tr
                             key={index}
-                            onClick={() => setSelectedCompromiso({
-                                ...compromiso,
-                                row_number: index + 1,
-                            })}
+                            onClick={() => setSelectedCompromiso(compromiso)}
                             style={styles.bodyTr}
                         >
                             <td style={styles.bodyTd}>

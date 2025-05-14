@@ -21,11 +21,15 @@ export default ({ set }) => {
                     sheet_name: 'CONSOLIDADO',
                     spreadsheet_id: SPREADSHEETID
                 })
-                console.log(response)
 
                 if (response?.length < 0) return
                 
-                dispatch(setAgreements({ agreements: response }))
+                dispatch(setAgreements({ agreements: response?.map((item, index) => {
+                    return {
+                        ...item,
+                        row_number: index + 1,
+                    }
+                })}))
                 set(false)
             } catch (e) {
                 console.error(e);

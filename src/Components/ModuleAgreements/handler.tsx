@@ -31,7 +31,6 @@ export default (dataAgreementsPrimary) => {
     })
   
     // Estadísticas para KPIs
-    // Para los KPIs: aplicar los filtros de sede y responsable, pero no el de estado (ya que queremos agrupar todos los estados)
     const dataForKPI = dataAgreements.filter((compromiso) => {
       const matchesSede = compromiso?.['sedes/nodos'] === selectedSede;
       if (selectedSede === "todas") return true
@@ -98,7 +97,6 @@ export default (dataAgreementsPrimary) => {
     );
 
     const handlerUpdateFunc = (selectedCompromiso) => {
-      console.log(selectedCompromiso,"selectedCompromiso")
       setIsDialogOpen(true)
       setDefaultValues(selectedCompromiso)
     }
