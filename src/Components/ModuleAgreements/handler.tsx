@@ -14,6 +14,7 @@ export default (dataAgreementsPrimary) => {
     const [tabValue, setTabValue] = useState(0)
     const [sedes, setSedes] = useState([])
     const [page, setPage] = useState(1);
+    const [defaultValues, setDefaultValues] = useState(null);
     const rowsPerPage = 6;
   
     // Filtrar compromisos según los criterios seleccionados
@@ -96,6 +97,12 @@ export default (dataAgreementsPrimary) => {
       page * rowsPerPage
     );
 
+    const handlerUpdateFunc = (selectedCompromiso) => {
+      console.log(selectedCompromiso,"selectedCompromiso")
+      setIsDialogOpen(true)
+      setDefaultValues(selectedCompromiso)
+    }
+
     return {
         // estados
         searchQuery,
@@ -139,6 +146,9 @@ export default (dataAgreementsPrimary) => {
         setSedes,
         responsablesList,
         setResponsablesList,
-        totalCompromisosFiltered
+        totalCompromisosFiltered,
+        handlerUpdateFunc,
+        defaultValues,
+        setDefaultValues,
     };
 }

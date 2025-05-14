@@ -73,11 +73,19 @@ export default function TableAgreements({
                         {paginatedData.map((compromiso, index) => (
                         <tr
                             key={index}
-                            onClick={() => setSelectedCompromiso(compromiso)}
+                            onClick={() => setSelectedCompromiso({
+                                ...compromiso,
+                                row_number: index + 1,
+                            })}
                             style={styles.bodyTr}
                         >
                             <td style={styles.bodyTd}>
-                            <Typography fontWeight="medium">{compromiso['compromisos / acuerdos'] ?? 'No tiene Compromiso'}</Typography>
+                            <Typography sx={{
+                                "display": "-webkit-box",
+                                "-webkit-line-clamp": "3",
+                                "-webkit-box-orient": "vertical",
+                                "overflow": "hidden",
+                            }} fontWeight="medium">{compromiso['compromisos / acuerdos'] ?? 'No tiene Compromiso'}</Typography>
                             </td>
                             <td style={styles.bodyTd}>
                                 {compromiso['fecha de seguimiento'] ?? 'No definida'}

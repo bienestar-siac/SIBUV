@@ -16,8 +16,15 @@ export default function ViewPopUpAgreements({
     setSelectedCompromiso,
     getEstadoChip,
     getPlazoChip,
-    selectedCompromiso
+    selectedCompromiso,
+    handlerUpdateFunc,
 }) {
+
+    const handlerChangeUpdate = () => {
+        setSelectedCompromiso(null)
+        handlerUpdateFunc(selectedCompromiso)
+    }
+
     return (
         <Dialog
             open={Boolean(selectedCompromiso)}
@@ -88,7 +95,7 @@ export default function ViewPopUpAgreements({
                         </Grid>
                     </Grid>
                     <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-                        <Button variant="outlined">Editar</Button>
+                        <Button sx={{  borderColor: '#eb3e26 !important', color: '#eb3e26' }} onClick={handlerChangeUpdate} variant="outlined">Editar</Button>
                     </Box>
             </DialogContent>
         </Dialog>

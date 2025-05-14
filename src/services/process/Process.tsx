@@ -1,4 +1,4 @@
-import { fetchPostGeneral } from '../fetch'
+import { fetchPostGeneral, fetchPutGeneral } from '../fetch'
 
 export const getDataSheet = (data) => {
     return fetchPostGeneral({
@@ -24,6 +24,13 @@ export const generateDoc = (data) => {
 
 export const createAgreements = (data) => {
     return fetchPostGeneral({
+        dataSend: data, 
+        urlEndPoint: `/api/v1/sheets/create-agreements`,
+    })
+}
+
+export const updateAgreements = (data) => {
+    return fetchPutGeneral({
         dataSend: data, 
         urlEndPoint: `/api/v1/sheets/create-agreements`,
     })

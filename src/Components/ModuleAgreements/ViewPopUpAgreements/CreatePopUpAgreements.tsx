@@ -16,7 +16,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect, Fragment } from "react";
 import { getViewDataProcess } from "../../../services/process/decryptdata"
-import { createAgreements } from "../../../services/process/Process"
+import { createAgreements, updateAgreements} from "../../../services/process/Process"
 
 const SPREEDSHEETID = import.meta.env.VITE_SPREEDSHEETID_AGREEMENTS;
 
@@ -43,7 +43,16 @@ const requiredFields = [
     'plazo',
 ];
   
-export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, estados, plazos }) {
+export default function CreatePopUpAgreements({ 
+  open,
+  onClose, 
+  onCreate, 
+  sedes, 
+  estados, 
+  plazos, 
+  defaultValues,
+  setDefaultValues,
+}) {
     const [form, setForm] = useState(DEFAULT_VALUES);
     const [origin, setOrigin] = useState(null)
     const [responsability, setResponsability] = useState(null)
@@ -54,11 +63,17 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
       setForm((f) => ({ ...f, [field]: e.target.value }));
     };
 
+    const handlerCloseDialog = () => {
+      setForm(DEFAULT_VALUES)
+      setDefaultValues(null)
+      onClose()
+    }
+
     const handleSubmit = async () => {
         setDisabled(true)
         setStatus({ open: true, type: 'info', message: 'Enviando...' });
         try {
-            const save = await createAgreements({
+            const body = {
                 sheet_name: "CONSOLIDADO",
                 spreadsheet_id: SPREEDSHEETID,
                 sedes_nodos: form.sede,
@@ -71,11 +86,20 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
                 plazo: form.plazo,
                 observaciones: form.observaciones,
                 origen: form?.origen,
-            });
+                row_number: defaultValues?.row_number
+            }
+
+            let save = null
+            if (!defaultValues)
+                save = await createAgreements(body);
+
+            if (defaultValues) 
+                save = await updateAgreements(body);
+
             if (save?.message) {
                 setStatus({ open: true, type: 'success', message: 'Acuerdo creado exitosamente' });
                 setDisabled(false)
-                setForm(DEFAULT_VALUES);
+                if (!defaultValues) setForm(DEFAULT_VALUES);
             } else {
                 setStatus({ open: true, type: 'error', message: "Error al guardar" });
                 setDisabled(false)
@@ -109,11 +133,37 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
       if (origin === null) init()
     },[origin])
 
+    useEffect(() => {
+      if (!defaultValues) return
+
+      let fs = "";
+      const raw = defaultValues?.["fecha de seguimiento"];
+      if (raw) {
+        const [dd, mm, yyyy] = raw.split("-");
+        fs = `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+      }
+
+      setForm({
+        origen: defaultValues?.origen || "",
+        sede: defaultValues?.["sedes/nodos"] || "",
+        compromiso: defaultValues?.["compromisos / acuerdos"] || "",
+        responsable1: defaultValues?.["responsable 1"] || "",
+        responsable2: defaultValues?.["responsable 2"] || "",
+        fechaSeguimiento: fs,
+        estado: defaultValues?.estado || "",
+        plazo: defaultValues?.["plazo de ejecución"] || "",
+        accionRealizada: defaultValues?.["acción realizada"] || "",
+        observaciones: defaultValues?.observaciones || "",
+      });
+      setDisabled(false)
+      console.log(defaultValues?.row_number)
+    },[defaultValues])
+
     return (
       <Fragment>
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+        <Dialog open={open} onClose={handlerCloseDialog} fullWidth maxWidth="md">
           <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
-            Nuevo Acuerdo
+            { defaultValues === null ? "Nuevo Acuerdo" : "Actualizar Acuerdo"}
             <IconButton sx={{ ml: "auto" }} onClick={onClose}>
               <CloseIcon />
             </IconButton>
@@ -286,13 +336,13 @@ export default function CreatePopUpAgreements({ open, onClose, onCreate, sedes, 
           </DialogContent>
     
           <DialogActions sx={{ px: 3, py: 2 }}>
-            <Button disabled={disabled} onClick={onClose}>Cancelar</Button>
+            <Button disabled={disabled} onClick={handlerCloseDialog}>Cancelar</Button>
             <Button 
               disabled={!isValid || disabled} 
               sx={{ background: '#eb3e26' }} 
               variant="contained" 
               onClick={handleSubmit}>
-              Crear Acuerdo
+              { defaultValues === null ? "Crear Acuerdo" : "Actualizar Acuerdo"}
             </Button>
           </DialogActions>
         </Dialog>

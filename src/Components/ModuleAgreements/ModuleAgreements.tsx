@@ -9,8 +9,8 @@ import {
 } from "@mui/material"
 import {
   Add as AddIcon,
-  Refresh as RefreshIcon,
 } from "@mui/icons-material"
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 // Components Local
 import TotalAgreements from "./TotalAgreements/TotalAgreements"
@@ -71,7 +71,10 @@ export default function Dashboard() {
     setSedes,
     responsablesList,
     setResponsablesList,
-    totalCompromisosFiltered
+    totalCompromisosFiltered,
+    handlerUpdateFunc,
+    defaultValues,
+    setDefaultValues,
   } = Handlers(dataAgreementsPrimary);
 
   useEffect(() => {
@@ -108,7 +111,7 @@ export default function Dashboard() {
               <Button sx={{ backgroundColor: '#eb3e26'}} variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setIsDialogOpen(true)}>
                 Nuevo Compromiso
               </Button>
-              <Button variant="outlined" startIcon={<RefreshIcon />}>
+              <Button sx={{  borderColor: '#eb3e26 !important', color: '#eb3e26' }}  variant="outlined" startIcon={<HomeRepairServiceIcon />}>
                  Herramientas
               </Button>
             </Box>
@@ -158,14 +161,17 @@ export default function Dashboard() {
             setSelectedCompromiso,
             getEstadoChip,
             getPlazoChip,
-            selectedCompromiso
+            selectedCompromiso,
+            handlerUpdateFunc,
           }}/>
 
           <CreatePopUpAgreements {...{
               open: isDialogOpen, 
               onClose: () => setIsDialogOpen(false), 
               onCreate: () => {}, 
-              sedes, 
+              sedes,
+              defaultValues: defaultValues,
+              setDefaultValues,
               estados: ['EN EJECUCIÓN', 'PENDIENTE', 'CERRADO'], 
               plazos: ['Corto Plazo (1 a 3 meses)', 'Mediano plazo (3 a 6 meses)', 'Largo Plazo (más de 6 meses)']
           }}/>
