@@ -81,7 +81,10 @@ export default function CreatePopUpAgreements({
                 responsable_1: form.responsable1,
                 responsable_2: form.responsable2,
                 accion: form.accionRealizada,
-                fecha_seguimiento: form.fechaSeguimiento,
+                fecha_seguimiento: (() => {
+                  const [year, month, day] = form.fechaSeguimiento.split('-');
+                  return `${day}-${month}-${year}`;
+                })(),
                 estado: form.estado,
                 plazo: form.plazo,
                 observaciones: form.observaciones,
