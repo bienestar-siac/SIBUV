@@ -15,12 +15,13 @@ const methodGet = 'GET';
  * @param {*} param0 
  * @returns 
  */
-export const fetchPostGeneral = ({ dataSend, urlEndPoint, path="#" }) => {
+export const fetchPostGeneral = ({ dataSend, urlEndPoint, path="#", header }) => {
     return fetchGeneral({
         dataSend,
         urlEndPoint,
         type: methodPost,
-        path
+        path,
+        header
     });
 }
 
@@ -61,7 +62,8 @@ const fetchGeneral = async ({
     dataSend,
     urlEndPoint,
     type,
-    path = '#'
+    path = '#',
+    header = null,
 }) => {
     let response = null
     try {
@@ -69,6 +71,7 @@ const fetchGeneral = async ({
             method: type,
             headers: {
                 'Content-Type': 'application/json',
+                ...header
             },
         };
 

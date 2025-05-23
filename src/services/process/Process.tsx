@@ -35,3 +35,12 @@ export const updateAgreements = (data) => {
         urlEndPoint: `/api/v1/sheets/create-agreements`,
     })
 }
+
+export const generatePrompIA = (data, header) => {
+    return fetchPostGeneral({
+        dataSend: data, 
+        urlEndPoint: `/v1/chat/completions`,
+        path: 'https://api.deepseek.com',
+        header: header,
+    })
+}

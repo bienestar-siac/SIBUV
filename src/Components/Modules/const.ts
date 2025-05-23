@@ -32,6 +32,6 @@ export default [
       subtitle: "Procesos Internos de Bienestar Universitario",
       icon: "/icons/5.png",
       color: "#F44336",
-      path: '#',
+      path: '/module/ia',
     },
 ]

@@ -10,6 +10,7 @@ const ModuleWorkerPlan = lazy(() => import("../pages/WorkPlan/index.tsx"));
 const GestionReport = lazy(() => import("../pages/GestionReport/index.tsx"));
 const ModuleQuality = lazy(() => import("../pages/ModuleQuality/index.tsx"));
 const ModuleAgreements = lazy(() => import("../pages/ModuleAgreements/index.tsx"));
+const ModuleIA = lazy(() => import("../pages/IA/index.tsx"));
 
 export default [
   { path: "/", element: <Home />, isAuth: false },
@@ -20,5 +21,6 @@ export default [
   { path: '/module/informe-de-gestion', element: <GestionReport />, isAuth: true},
   { path: '/module/sistema-interno-de-aseguramiento-de-calidad', element: <ModuleQuality />, isAuth: true},
   { path: '/module/seguimiento-de-compromisos-y-acuerdos', element: <ModuleAgreements />, isAuth: true},
+  { path: '/module/ia', element: <ModuleIA />, isAuth: true},
   { path: "*", element: <NoFound />, isAuth: false },
 ];
