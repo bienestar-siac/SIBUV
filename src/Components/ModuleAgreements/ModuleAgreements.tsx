@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router";
 import {
   Container,
   Box,
@@ -27,7 +28,7 @@ import { useSelector } from "react-redux"
 
 export default function Dashboard() {
   const dataAgreementsPrimary = useSelector((state) => state.moduleAgreements.agreements);
-
+  const navigate = useNavigate();
   const  {
     // estados
     searchQuery,
@@ -111,7 +112,7 @@ export default function Dashboard() {
               <Button sx={{ backgroundColor: '#eb3e26'}} variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setIsDialogOpen(true)}>
                 Nuevo Compromiso
               </Button>
-              <Button sx={{  borderColor: '#eb3e26 !important', color: '#eb3e26' }}  variant="outlined" startIcon={<HomeRepairServiceIcon />}>
+              <Button onClick={() => navigate('/module/seguimiento-de-compromisos-y-acuerdos/herramientas')} sx={{  borderColor: '#eb3e26 !important', color: '#eb3e26' }}  variant="outlined" startIcon={<HomeRepairServiceIcon />}>
                  Herramientas
               </Button>
             </Box>
