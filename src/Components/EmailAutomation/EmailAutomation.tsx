@@ -38,7 +38,7 @@ import styles from './styles'
 
 // Fetch
 import { getViewDataProcess } from "../../services/process/decryptdata"
-import { updatePrompt } from "../../services/process/Process"
+import { updatePrompt, generatePrompIA} from "../../services/process/Process"
 
 // Sample data for the table
 const sampleData = [
@@ -76,6 +76,10 @@ const sampleData = [
   { id: 32, correo: "vicerrectoria.regionalizacion@correounivalle.edu.co", prompt: "", fecha: "30/05/2025", estado: "Pendiente" },
 ];
 
+const serviceId =  import.meta.env.VITE_APP_EMAILJS_SERVICE_ID
+const templateId = import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID
+const userId =  import.meta.env.VITE_APP_EMAILJS_USER_ID
+
 export default function ToolsAgreements() {
   const [customPrompt, setCustomPrompt] = useState("")
   const [recipientEmail, setRecipientEmail] = useState("")
@@ -83,15 +87,56 @@ export default function ToolsAgreements() {
   const [htmlPrompt, setHtmlPrompt] = useState('')
   const [prompt, setPrompt] = useState("")
   const itemsPerPage = 5
+  const [feedback, setFeedback] = useState(null)
 
-  const serviceId =  import.meta.env.VITE_APP_EMAILJS_SERVICE_ID
-  const templateId = import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID
-  const userId =  import.meta.env.VITE_APP_EMAILJS_USER_ID
+  const handleSubmit = async () => {
 
-  const handleSubmit = () => {
-    console.log("Prompt:", customPrompt)
-    console.log("Email:", recipientEmail)
-    // Here you would typically send the data to your backend
+    const iaMessages = [
+      { role: "system", content: `${prompt}` },
+      { role: "user", content: `BUGA (regionalización)	BUGA	Conflictos al interior de la Sede Buga por ventas ambulantes de los estudiantes.	DIRECCION BUGA	VBU - DESARROLLO HUMANO	Corto Plazo (1 a 3 meses)	"Se orientó a estudiante sobre denuncia y se realizó acercamiento general para iniciar caracterización de estudiantes que tienen ventas ambulantes.
+
+13/02/2025:
+La Profesional de Trabajo Social realizó un acercamiento para la caracterización de 12 emprendimientos. Posteriormente, se convocó a los/las estudiantes a un espacio de conversación; sin embargo, no se obtuvo una respuesta efectiva.
+
+En cuanto a la denuncia del estudiante que fue agredido por una persona externa, se le brindó una ruta de acompañamiento y se establecieron medidas de seguridad y protección al estudiante, impidiendole el acceso al campus.
+
+30/05/2025:
+De acuerdo con las recientes medidas de seguridad para ingreso a las instalaciones de la Seccional, se reportó al área de recursos tecnológicos el listado de estudiantes con emprendimientos, de modo que éste censo sea registrado en la base de datos de ingreso."	"Se adjunta Caracterización de Emprendimientos liderados por Estudiantes de Univalle Buga actualizada con corte al 30 de abril de 2025.
+
+"		CERRADO	30-05-2025` }
+    ]
+
+    const response = await generatePrompIA({
+        model: "deepseek-chat",
+        messages: iaMessages,
+        max_tokens: 700,
+        stream: false,
+        temperature: 0.2
+    }, 
+    {
+        'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+    })
+
+    const botText = response.choices?.[0]?.message?.content ?? ""
+    console.log(botText)
+    const templateParams = {
+      to_email: recipientEmail,
+      subject: '!! Notificacion Seguimiento !!',
+      message: botText,
+      html_content: ""
+    }
+    try {
+      const result = await emailjs.send(serviceId, templateId, templateParams, userId)
+      console.log('EmailJS resultado:', result)
+      setFeedback({ type: 'success', msg: 'Correo enviado correctamente.' })
+      // opcional: limpiar email de destinatario
+      setRecipientEmail('')
+    } catch (error) {
+      console.error('Error EmailJS:', error)
+      setFeedback({ type: 'error', msg: 'Fallo enviando el correo.' })
+    } finally {
+      //setLoading(false)
+    }
   }
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -112,32 +157,53 @@ export default function ToolsAgreements() {
   }
   
   const handleSubmitEmail = async (e) => {
-    e.preventDefault();
-    //setFeedback(null);
-    const form = e.target;
-    const formData = {
-      to_email: form.to_email.value,
-      subject: form.subject.value,
-      message: form.message.value,
-    };
+    e.preventDefault()
+    setFeedback(null)
 
-    if (!/\S+@\S+\.\S+/.test(formData.to_email)) {
-      return;
-    }
-    if (!formData.subject.trim() || !formData.message.trim()) {
-      return;
+    // // Validaciones
+    // if (!validateEmail(recipientEmail)) {
+    //   setFeedback({ type: 'error', msg: 'Correo destino inválido.' })
+    //   return
+    // }
+    // if (!prompt) {
+    //   setFeedback({ type: 'error', msg: 'El prompt está vacío.' })
+    //   return
+    // }
+
+    //setLoading(true)
+    const response = await generatePrompIA({
+        model: "deepseek-chat",
+        messages: prompt,
+        max_tokens: 200,
+        stream: false,
+        temperature: 0.2
+    }, 
+    {
+        'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+    })
+
+    const botText = response.choices?.[0]?.message?.content ?? ""
+
+    const templateParams = {
+      to_email: recipientEmail,
+      subject: '!! Notificacion Seguimiento !!',
+      message: botText,
+      html_content: ""
     }
 
     try {
-      const result = await emailjs.send(serviceId, templateId, formData, userId);
-      console.log('EmailJS resultado:', result);
-      form.reset();
+      const result = await emailjs.send(serviceId, templateId, templateParams, userId)
+      console.log('EmailJS resultado:', result)
+      setFeedback({ type: 'success', msg: 'Correo enviado correctamente.' })
+      // opcional: limpiar email de destinatario
+      setRecipientEmail('')
     } catch (error) {
-      console.error('Error EmailJS:', error);
+      console.error('Error EmailJS:', error)
+      setFeedback({ type: 'error', msg: 'Fallo enviando el correo.' })
     } finally {
- 
+      //setLoading(false)
     }
-  };
+  }
 
   const handlePropmChange = async (html) => {
     setHtmlPrompt(html)
@@ -192,7 +258,7 @@ export default function ToolsAgreements() {
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Button variant="contained" onClick={handleSubmit} style={styles.submitButton} fullWidth>
+            <Button onClick={handleSubmitEmail} variant="contained" onClick={handleSubmit} style={styles.submitButton} fullWidth>
               Enviar Prueba
             </Button>
           </Grid>
