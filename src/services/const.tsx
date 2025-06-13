@@ -3,5 +3,5 @@ type fecthUris = {
 }
 
 export const uri: fecthUris = {
-    baseUrl: 'https://sibuvv.shop/backend'
+    baseUrl: 'http://127.0.0.1:8000'
 }

@@ -143,7 +143,7 @@ export default function CreatePopUpAgreements({
       const raw = defaultValues?.["fecha de seguimiento"];
       if (raw) {
         const [dd, mm, yyyy] = raw.split("-");
-        fs = `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+        fs = `${yyyy}-${mm?.padStart(2, "0")}-${dd?.padStart(2, "0")}`;
       }
 
       setForm({
