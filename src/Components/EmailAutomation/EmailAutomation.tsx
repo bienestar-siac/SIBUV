@@ -22,6 +22,7 @@ import {
   Grid,
 } from "@mui/material"
 import RichTextEditor from "./rich-text-editor"
+import emailjs from 'emailjs-com';
 
 // Components
 import Tools from './Tools/Tools'
@@ -37,6 +38,7 @@ import styles from './styles'
 
 // Fetch
 import { getViewDataProcess } from "../../services/process/decryptdata"
+import { updatePrompt } from "../../services/process/Process"
 
 // Sample data for the table
 const sampleData = [
@@ -82,6 +84,10 @@ export default function ToolsAgreements() {
   const [prompt, setPrompt] = useState("")
   const itemsPerPage = 5
 
+  const serviceId =  import.meta.env.VITE_APP_EMAILJS_SERVICE_ID
+  const templateId = import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID
+  const userId =  import.meta.env.VITE_APP_EMAILJS_USER_ID
+
   const handleSubmit = () => {
     console.log("Prompt:", customPrompt)
     console.log("Email:", recipientEmail)
@@ -105,11 +111,43 @@ export default function ToolsAgreements() {
     }
   }
   
-  const handlePropmChange = (html) => {
+  const handleSubmitEmail = async (e) => {
+    e.preventDefault();
+    //setFeedback(null);
+    const form = e.target;
+    const formData = {
+      to_email: form.to_email.value,
+      subject: form.subject.value,
+      message: form.message.value,
+    };
+
+    if (!/\S+@\S+\.\S+/.test(formData.to_email)) {
+      return;
+    }
+    if (!formData.subject.trim() || !formData.message.trim()) {
+      return;
+    }
+
+    try {
+      const result = await emailjs.send(serviceId, templateId, formData, userId);
+      console.log('EmailJS resultado:', result);
+      form.reset();
+    } catch (error) {
+      console.error('Error EmailJS:', error);
+    } finally {
+ 
+    }
+  };
+
+  const handlePropmChange = async (html) => {
     setHtmlPrompt(html)
     const text = html.replace(/<[^>]+>/g, '').trim()
     setPrompt(text)
-    setDisabled(false)
+    // setDisabled(false)
+    await updatePrompt({
+        prompt_html: html,
+        prompt_neutral: text
+    })
   }
 
   const totalPages = Math.ceil(sampleData.length / itemsPerPage)

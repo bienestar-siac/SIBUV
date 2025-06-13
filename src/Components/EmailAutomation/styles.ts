@@ -51,12 +51,8 @@ const styles: Styles = {
         }
     },
     container: {
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "40px 20px",
-        fontFamily: '"Inter", "Poppins", sans-serif',
-        backgroundColor: "#fafafa",
-        minHeight: "100vh",
+        padding: "20px",
+        backgroundColor: "#fff",
     },
     title: {
         fontSize: "32px",
@@ -73,7 +69,8 @@ const styles: Styles = {
         marginBottom: "40px",
     },
     textField: {
-        marginBottom: "24px",
+        // marginBottom: "24px",
+        height: '100%',
         "& .MuiOutlinedInput-root": {
         borderRadius: "8px",
         backgroundColor: "#ffffff",
