@@ -44,3 +44,10 @@ export const generatePrompIA = (data, header) => {
         header: header,
     })
 }
+
+export const updatePrompt = (data) => {
+    return fetchPutGeneral({
+        dataSend: data, 
+        urlEndPoint: `/api/v1/sheets/pdate-insert-prompt`,
+    })
+}

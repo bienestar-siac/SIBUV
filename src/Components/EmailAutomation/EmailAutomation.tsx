@@ -35,6 +35,9 @@ import { useSelector } from "react-redux"
 // Styles
 import styles from './styles'
 
+// Fetch
+import { getViewDataProcess } from "../../services/process/decryptdata"
+
 // Sample data for the table
 const sampleData = [
   { id: 1, correo: "atencion.violenciasgenero@correounivalle.edu.co", prompt: "", fecha: "30/05/2025", estado: "Pendiente" },
@@ -113,6 +116,17 @@ export default function ToolsAgreements() {
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentData = sampleData.slice(startIndex, startIndex + itemsPerPage)
 
+  useEffect(() => {
+    const init = async () => {
+      const data = await getViewDataProcess({
+          "sheet_name": "PROMPT IA EMAIL",
+      })
+      setHtmlPrompt(data?.[0]?.promp)
+      setPrompt(data?.[0]?.promp_neutro)
+    }
+    init()
+  }, [])
+  
   return (
     <div style={styles.container}>
       <Typography variant="h1" style={styles.title}>
