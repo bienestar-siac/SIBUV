@@ -34,4 +34,11 @@ export default [
       color: "#F44336",
       path: '/module/ia',
     },
+    {
+      title: "Codigo de Barras",
+      subtitle: "Procesos Internos de Bienestar Universitario",
+      icon: "/icons/6.png",
+      color: "#F44336",
+      path: '/module/codigo-de-barras',
+    },
 ]

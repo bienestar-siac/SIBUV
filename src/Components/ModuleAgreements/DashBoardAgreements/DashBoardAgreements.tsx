@@ -39,6 +39,10 @@ export default function DashBoardAgreements({
     filteredCompromisos,
     responsablesList,
     setResponsablesList,
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
 }) {
     return (
         <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -113,10 +117,29 @@ export default function DashBoardAgreements({
                     </FormControl>
 
                     <Box>
-                        {/* <Typography variant="subtitle2" gutterBottom>
-                            Rango de fechas
-                        </Typography> */}
-                        {/* <DatePickerWithRange /> */}
+                        <FormControl fullWidth>
+                        <TextField
+                            label="Fecha inicio"
+                            type="date"
+                            InputLabelProps={{ shrink: true }}
+                            value={startDate ? startDate.toISOString().split("T")[0] : ""}
+                            onChange={(e) =>
+                            setStartDate(e.target.value ? new Date(e.target.value) : null)
+                            }
+                        />
+                        </FormControl>
+
+                        <FormControl fullWidth sx={{ mt: 2 /* separación opcional */ }}>
+                        <TextField
+                            label="Fecha fin"
+                            type="date"
+                            InputLabelProps={{ shrink: true }}
+                            value={endDate ? endDate.toISOString().split("T")[0] : ""}
+                            onChange={(e) =>
+                            setEndDate(e.target.value ? new Date(e.target.value) : null)
+                            }
+                        />
+                        </FormControl>
                     </Box>
                     </Box>
                 </Paper>

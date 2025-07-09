@@ -76,6 +76,12 @@ export default function Dashboard() {
     handlerUpdateFunc,
     defaultValues,
     setDefaultValues,
+
+    // Filter
+    startDate, 
+    setStartDate,
+    endDate, 
+    setEndDate,
   } = Handlers(dataAgreementsPrimary);
 
   useEffect(() => {
@@ -144,6 +150,10 @@ export default function Dashboard() {
               filteredCompromisos,
               responsablesList,
               setResponsablesList,
+              startDate,
+              endDate,
+              setStartDate,
+              setEndDate,
           }} />
 
           {/* Tabla de Compromisos */}

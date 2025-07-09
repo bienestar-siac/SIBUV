@@ -12,6 +12,7 @@ import {
     MenuItem,
     Snackbar,
     Alert,
+    Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect, Fragment } from "react";
@@ -181,36 +182,51 @@ export default function CreatePopUpAgreements({
                 </Typography>
                 <Box sx={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 2 }}>
                   <Typography variant="body2" fontWeight="medium">Origen:</Typography>
-                  <TextField
-                      select
-                      fullWidth
-                      size="small"
-                      value={form.origen}
-                      onChange={handleChange("origen")}
-                      label="Selecione el origen"
-                      disabled={!origin}
-                  >
-                      <MenuItem value="">Seleccionar...</MenuItem>
-                      {origin?.map((o, index) => (
-                          <MenuItem key={index} value={o?.origen}>{o?.origen}</MenuItem>
-                      ))}
-                  </TextField>
+                  <Autocomplete
+                    disabled={!origin || origin.length === 0}
+                    size="small"
+                    fullWidth
+                    options={origin || []}
+                    getOptionLabel={(opt) => opt.origen}
+                    value={
+                      origin?.find((o) => o.origen === form.origen) || null
+                    }
+                    onChange={(_e, newValue) => {
+                      handleChange("origen")({
+                        target: { value: newValue?.origen || "" },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Seleccione el origen"
+                        placeholder="Busca o selecciona..."
+                      />
+                    )}
+                  />
     
                   <Typography variant="body2" fontWeight="medium">Sede:</Typography>
-                  <TextField
-                    select
-                    fullWidth
+                  <Autocomplete
+                    disabled={!sedes || sedes.length === 0}
                     size="small"
-                    value={form.sede}
-                    label="Selecione la sede"
-                    onChange={handleChange("sede")}
-                  >
-                    <MenuItem value="">Seleccionar...</MenuItem>
-                    {sedes.map((s) => (
-                      <MenuItem key={s} value={s}>{s}</MenuItem>
-                    ))}
-                  </TextField>
-    
+                    fullWidth
+                    options={sedes || []}
+                    getOptionLabel={(opt) => opt}
+                    value={form.sede || null}
+                    onChange={(_e, newValue) => {
+                      handleChange("sede")({
+                        target: { value: newValue || "" },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Seleccione la sede"
+                        placeholder="Busca o selecciona..."
+                      />
+                    )}
+                  />
+
                   <Typography variant="body2" fontWeight="medium">Compromiso:</Typography>
                   <TextField
                     fullWidth
@@ -223,44 +239,52 @@ export default function CreatePopUpAgreements({
                   />
     
                   <Typography variant="body2" fontWeight="medium">Responsable 1:</Typography>
-                  <TextField
-                      select
-                      label="Responsable 1"
-                      fullWidth
-                      size="small"
-                      value={form.responsable1}
-                      onChange={handleChange("responsable1")}
-                      disabled={!responsability}
-                  >
-                      <MenuItem value="">Seleccionar...</MenuItem>
-                      {responsability?.map((r, i) => {
-                          return (
-                              <MenuItem key={i} value={r?.responsable}>
-                                  {r?.responsable}
-                              </MenuItem>
-                          );
-                      })}
-                  </TextField>
-    
+                  <Autocomplete
+                    disabled={!responsability || responsability.length === 0}
+                    size="small"
+                    fullWidth
+                    options={responsability || []}
+                    getOptionLabel={(opt) => opt.responsable}
+                    value={
+                      responsability?.find((r) => r.responsable === form.responsable1) || null
+                    }
+                    onChange={(_e, newValue) => {
+                      handleChange("responsable1")({
+                        target: { value: newValue?.responsable || "" },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Responsable 1"
+                        placeholder="Busca o selecciona..."
+                      />
+                    )}
+                  />
+
                   <Typography variant="body2" fontWeight="medium">Responsable 2:</Typography>
-                  <TextField
-                      select
-                      label="Responsable 2"
-                      fullWidth
-                      size="small"
-                      value={form.responsable2}
-                      onChange={handleChange("responsable2")}
-                      disabled={!responsability}
-                  >
-                      <MenuItem value="">Seleccionar...</MenuItem>
-                      {responsability?.map((r, i) => {
-                          return (
-                              <MenuItem key={i} value={r?.responsable}>
-                                  {r?.responsable}
-                              </MenuItem>
-                          );
-                      })}
-                  </TextField>
+                  <Autocomplete
+                    disabled={!responsability || responsability.length === 0}
+                    size="small"
+                    fullWidth
+                    options={responsability || []}
+                    getOptionLabel={(opt) => opt.responsable}
+                    value={
+                      responsability?.find((r) => r.responsable === form.responsable2) || null
+                    }
+                    onChange={(_e, newValue) => {
+                      handleChange("responsable2")({
+                        target: { value: newValue?.responsable || "" },
+                      });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Responsable 2"
+                        placeholder="Busca o selecciona..."
+                      />
+                    )}
+                  />
     
                   <Typography variant="body2" fontWeight="medium">Fecha de Seguimiento:</Typography>
                   <TextField

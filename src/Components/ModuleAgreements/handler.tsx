@@ -15,21 +15,56 @@ export default (dataAgreementsPrimary) => {
     const [sedes, setSedes] = useState([])
     const [page, setPage] = useState(1);
     const [defaultValues, setDefaultValues] = useState(null);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
+
     const rowsPerPage = 6;
   
     // Filtrar compromisos según los criterios seleccionados
+    // const filteredCompromisos = dataAgreements.filter((compromiso) => {
+    //   const matchesSede = selectedSede === "todas" || compromiso?.['sedes/nodos'] === selectedSede
+    //   const matchesEstado = selectedEstado === "todos" || compromiso?.estado === selectedEstado
+    //   const matchesResponsable = selectedResponsable === "todos" || compromiso?.['responsable 1'] === selectedResponsable
+    //   const matchesSearch =
+    //     searchQuery === "" ||
+    //     compromiso.actividad.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //     compromiso.detalles.toLowerCase().includes(searchQuery.toLowerCase())
+  
+    //   return matchesSede && matchesEstado && matchesResponsable
+    // })
+
     const filteredCompromisos = dataAgreements.filter((compromiso) => {
-      const matchesSede = selectedSede === "todas" || compromiso?.['sedes/nodos'] === selectedSede
-      const matchesEstado = selectedEstado === "todos" || compromiso?.estado === selectedEstado
-      const matchesResponsable = selectedResponsable === "todos" || compromiso?.['responsable 1'] === selectedResponsable
+      const matchesSede =
+        selectedSede === "todas" ||
+        compromiso?.["sedes/nodos"] === selectedSede;
+      const matchesEstado =
+        selectedEstado === "todos" || compromiso?.estado === selectedEstado;
+      const matchesResponsable =
+        selectedResponsable === "todos" ||
+        compromiso?.["responsable 1"] === selectedResponsable;
       const matchesSearch =
         searchQuery === "" ||
         compromiso.actividad.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        compromiso.detalles.toLowerCase().includes(searchQuery.toLowerCase())
-  
-      return matchesSede && matchesEstado && matchesResponsable
-    })
-  
+        compromiso.detalles.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const rawDate = compromiso?.["fecha de seguimiento"];
+      const compromisoDate = rawDate
+        ? new Date(rawDate) 
+        : null;
+
+      const matchesDate =
+        (!startDate || (compromisoDate && compromisoDate >= startDate)) &&
+        (!endDate   || (compromisoDate && compromisoDate <= endDate));
+
+      return (
+        matchesSede &&
+        matchesEstado &&
+        matchesResponsable &&
+        matchesSearch &&
+        matchesDate
+      );
+    });
+
     // Estadísticas para KPIs
     const dataForKPI = dataAgreements.filter((compromiso) => {
       const matchesSede = compromiso?.['sedes/nodos'] === selectedSede;
@@ -148,5 +183,11 @@ export default (dataAgreementsPrimary) => {
         handlerUpdateFunc,
         defaultValues,
         setDefaultValues,
+
+        // Filter Date
+        startDate, 
+        setStartDate,
+        endDate, 
+        setEndDate,
     };
 }

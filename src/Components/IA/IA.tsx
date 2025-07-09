@@ -1,9 +1,16 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
-import { Box, TextField, IconButton, Paper, Typography, Container } from "@mui/material"
+import { Button, Box, TextField, IconButton, Paper, Typography, Container } from "@mui/material"
 import MicIcon from "@mui/icons-material/Mic"
 import SendIcon from "@mui/icons-material/Send"
+
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material"
 
 // Styles 
 import Styles from './styles'
@@ -27,6 +34,7 @@ export default function ChatInterfaceIA(): React.FC {
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const mediaRecorderRef = useRef<MediaRecorder>()
     const recordedChunksRef = useRef<Blob[]>([])
+    const [comprimos, setComprimos] = useState("General")
     const styles = Styles(isRecording)
     console.log(PrompDefault)
     useEffect(() => {
@@ -143,6 +151,24 @@ export default function ChatInterfaceIA(): React.FC {
 
     return (
         <Container sx={styles.container}>
+        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'flex-start', marginTop: '20px'}}>
+            <FormControl fullWidth size="small">
+                {/* La “etiqueta” del campo */}
+                <InputLabel id="comprimos-label">Comprimos</InputLabel>
+                <Select
+                    labelId="comprimos-label"
+                    sx={{ width: '300px'}}
+                    id="comprimos-select"
+                    value={comprimos}
+                    label="Comprimos" 
+                    onChange={(e) => setComprimos(e.target.value)}
+                >
+                    {/* única opción disponible */}
+                    <MenuItem value="General">General</MenuItem>
+                    <MenuItem value="1">Acuerdos y Compromisos</MenuItem>
+                </Select>
+            </FormControl>
+        </Box>
         <Box sx={styles.chatArea}>
             {messages.map((message, index) => (
             <Paper key={index} elevation={1} sx={message.isUser ? styles.userMessage : styles.botMessage}>

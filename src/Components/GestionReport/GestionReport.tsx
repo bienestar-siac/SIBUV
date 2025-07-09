@@ -28,7 +28,12 @@ import {
   AppBar,
   Snackbar,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Autocomplete,
 } from "@mui/material"
 
 // Icons Material IU
@@ -61,8 +66,29 @@ import FormDinamic from '../WorkPlan/Form/FormDinamic'
 // Handlers
 import Handlers from './handlers'
 
+const procesos = [
+  "ADMINISTRATIVO",
+  "SALUD OCUPACIONAL",
+  "DEPORTE Y RECREACIÓN",
+]
+const clasificaciones = ["Datos Clave", "Información General", "Secciones"]
+const tipos = ["Text", "TextArea", "Number", "Select"]
+
+const fieldSX = {
+  "& .MuiInputBase-root": {
+    height: 40,
+    // Si quieres que el contenido interno esté centrado verticalmente:
+    alignItems: "center",
+  },
+  // Ajuste fino del padding interno (opcional):
+  "& .MuiInputBase-input": {
+    padding: "0 14px",
+  },
+};
+
 export default function GestionReport() {
   const [loading, setLoading] = useState(false)
+  const [openAddVar, setOpenAddVar] = useState(false)
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
   const dispatch = useDispatch();
 
@@ -75,6 +101,63 @@ export default function GestionReport() {
       value: doc?.valor
     }
   })
+  const [newVar, setNewVar] = useState({
+    id: "",
+    variable: "",
+    nombreVariable: "",
+    proceso: null as string | null,
+    valor: "",
+    clasificacion: null as string | null,
+    tipo: null as string | null,
+  })
+
+  const handleOpen = () => setOpenAddVar(true)
+  const handleClose = () => setOpenAddVar(false)
+
+  const handleField =
+    (field: keyof typeof newVar) =>
+    (_: any, valueOrEvent: any) => {
+      const val =
+        typeof valueOrEvent === "string"
+          ? valueOrEvent
+          : valueOrEvent?.target?.value ?? valueOrEvent
+      setNewVar((prev) => ({ ...prev, [field]: val }))
+    }
+
+  const handleSubmit = () => {
+    // Detectamos qué campos están vacíos
+    const missingFields = Object.entries(newVar)
+      .filter(([_, value]) => value === "" || value === null || value === undefined)
+      .map(([key]) => {
+        switch (key) {
+          case "id": return "ID";
+          case "variable": return "Variable";
+          case "nombreVariable": return "Nombre de Variable";
+          case "proceso": return "Proceso";
+          case "valor": return "Valor";
+          case "clasificacion": return "Clasificación";
+          case "tipo": return "Tipo";
+          default: return key;
+        }
+      });
+
+    if (missingFields.length > 0) {
+      setSnackbar({
+        open: true,
+        message: `Por favor completa los siguientes campos:\n• ${missingFields.join("\n• ")}`,
+        severity: "error",
+      });
+      return; // No cerramos el diálogo
+    }
+
+    // Si todo OK
+    setSnackbar({
+      open: true,
+      message: "Variable agregada exitosamente",
+      severity: "success",
+    });
+    handleClose();
+  };
 
   const {
     activeTab,
@@ -148,16 +231,28 @@ export default function GestionReport() {
           <CardHeader
             title=""
             action={
-              <Button 
-                onClick={handleGenerateDoc}
-                sx={{ background: "rgb(235, 62, 38)" }} 
-                variant="contained" 
-                color="primary"
-                startIcon={!loading ? <DescriptionIcon /> : null}
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : "Generar Informe"}
-              </Button>
+              <Box sx={{ display: 'flex', gap: '30px'}}>
+                <Button 
+                  onClick={handleOpen}
+                  sx={{ background: "rgb(235, 62, 38)" }} 
+                  variant="contained" 
+                  color="primary"
+                  startIcon={!loading ? <AddIcon /> : null}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Agregar Variable"}
+                </Button>
+                <Button 
+                  onClick={handleGenerateDoc}
+                  sx={{ background: "rgb(235, 62, 38)" }} 
+                  variant="contained" 
+                  color="primary"
+                  startIcon={!loading ? <DescriptionIcon /> : null}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Generar Informe"}
+                </Button>
+              </Box>
             }
             sx={{
               flexDirection: { xs: "column", sm: "row" },
@@ -213,6 +308,93 @@ export default function GestionReport() {
       {activeTab === 1 && (
         <FormDinamic {...{activeStep, pasos, renderStepContent, handleNext, handleBack  }} />
       )}
+
+      <Dialog open={openAddVar} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle>Agregar Variable</DialogTitle>
+        <DialogContent sx={{ display: "grid", gap: 2, pt: 1 }}>
+          {/* ID */}
+          <TextField
+            label="ID"
+            value={newVar.id}
+            sx={fieldSX}
+            onChange={(e) => handleField("id")(null, e.target.value)}
+            fullWidth
+          />
+
+          {/* VARIABLE */}
+          <TextField
+            label="VARIABLE"
+            value={newVar.variable}
+            sx={fieldSX}
+            onChange={(e) =>
+              setNewVar((p) => ({ ...p, variable: e.target.value }))
+            }
+            fullWidth
+          />
+
+          {/* NOMBRE_VARIABLE */}
+          <TextField
+            label="Nombre Variable"
+            value={newVar.nombreVariable}
+            sx={fieldSX}
+            onChange={(e) =>
+              setNewVar((p) => ({ ...p, nombreVariable: e.target.value }))
+            }
+            fullWidth
+          />
+
+          {/* PROCESO */}
+          <Autocomplete
+            options={procesos}
+            value={newVar.proceso}
+            onChange={handleField("proceso")}
+            freeSolo={false}
+            sx={fieldSX}
+            renderInput={(params) => (
+              <TextField {...params} label="Proceso" fullWidth />
+            )}
+          />
+
+          {/* VALOR */}
+          <TextField
+            label="Valor"
+            value={newVar.valor}
+            sx={fieldSX}
+            onChange={(e) =>
+              setNewVar((p) => ({ ...p, valor: e.target.value }))
+            }
+            fullWidth
+          />
+
+          {/* Clasificación */}
+          <Autocomplete
+            options={clasificaciones}
+            value={newVar.clasificacion}
+            onChange={handleField("clasificacion")}
+            sx={fieldSX}
+            renderInput={(params) => (
+              <TextField {...params} label="Clasificación" fullWidth />
+            )}
+          />
+
+          {/* Tipo */}
+          <Autocomplete
+            options={tipos}
+            value={newVar.tipo}
+            sx={fieldSX}
+            onChange={handleField("tipo")}
+            renderInput={(params) => (
+              <TextField {...params} label="Tipo" fullWidth />
+            )}
+          />
+        </DialogContent>
+        <DialogActions sx={{ pr: 3, pb: 2 }}>
+          <Button sx={{ border: '1px solid rgb(235, 62, 38)', color: 'rgb(235, 62, 38)' }} onClick={handleClose}>Cancelar</Button>
+          <Button sx={{ background: 'rgb(235, 62, 38)' }} variant="contained" onClick={handleSubmit}>
+            Agregar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbar.open}
