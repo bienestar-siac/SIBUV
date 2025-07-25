@@ -1,4 +1,6 @@
 import type React from "react"
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import { useState, useRef, useEffect } from "react"
 import { Button, Box, TextField, IconButton, Paper, Typography, Container } from "@mui/material"
@@ -31,10 +33,12 @@ export default function ChatInterfaceIA(): React.FC {
     const [inputText, setInputText] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [isRecording, setIsRecording] = useState(false)
+    const [comprimos, setComprimos] = useState("General")
+
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const mediaRecorderRef = useRef<MediaRecorder>()
     const recordedChunksRef = useRef<Blob[]>([])
-    const [comprimos, setComprimos] = useState("General")
+
     const styles = Styles(isRecording)
     console.log(PrompDefault)
     useEffect(() => {
@@ -169,10 +173,29 @@ export default function ChatInterfaceIA(): React.FC {
                 </Select>
             </FormControl>
         </Box>
+
         <Box sx={styles.chatArea}>
-            {messages.map((message, index) => (
-            <Paper key={index} elevation={1} sx={message.isUser ? styles.userMessage : styles.botMessage}>
+            {messages.map((message, idx) => (
+            <Paper
+                key={idx}
+                elevation={1}
+                sx={message.isUser ? styles.userMessage : styles.botMessage}
+            >
+                {message.isUser ? (
                 <Typography variant="body1">{message.text}</Typography>
+                ) : (
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                    h1: ({node, ...props}) => <Typography variant="h5" gutterBottom {...props} />,
+                    h2: ({node, ...props}) => <Typography variant="h6" gutterBottom {...props} />,
+                    h3: ({node, ...props}) => <Typography variant="subtitle1" gutterBottom {...props} />,
+                    p: ({node, ...props}) => <Typography variant="body1" paragraph {...props} />,
+                    }}
+                >
+                    {message.text}
+                </ReactMarkdown>
+                )}
             </Paper>
             ))}
             <div ref={messagesEndRef} />
@@ -183,20 +206,20 @@ export default function ChatInterfaceIA(): React.FC {
             <MicIcon />
             </IconButton>
             <TextField
-            variant="outlined"
-            placeholder="Escribe un mensaje..."
-            fullWidth
-            value={inputText}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            sx={styles.inputField}
-            size="small"
+                variant="outlined"
+                placeholder="Escribe un mensaje..."
+                fullWidth
+                value={inputText}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                sx={styles.inputField}
+                size="small"
             />
             <IconButton
-            onClick={handleSend}
-            disabled={!inputText.trim() || isLoading}
-            sx={styles.sendButton}
-            aria-label="Enviar mensaje"
+                onClick={handleSend}
+                disabled={!inputText.trim() || isLoading}
+                sx={styles.sendButton}
+                aria-label="Enviar mensaje"
             >
             <SendIcon />
             </IconButton>

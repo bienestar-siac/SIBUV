@@ -52,7 +52,7 @@ import { Informe } from '../../interfaces/interfaces'
 import { useSelector } from "react-redux";
 
 // Fetch
-import { generateDoc as fetchGenerateDoc, updateDataProcessTask } from '../../services/process/Process'
+import { generateDoc as fetchGenerateDoc, updateDataProcessTask, createNewVar} from '../../services/process/Process'
 
 // Redux
 import { setReportForms } from "../../hooks/viewProcess";
@@ -69,8 +69,17 @@ import Handlers from './handlers'
 const procesos = [
   "ADMINISTRATIVO",
   "SALUD OCUPACIONAL",
+  "SALUD ESTUDIANTIL",
   "DEPORTE Y RECREACIÓN",
-]
+  "RESTAURANTE",
+  "ÁREA ASUNTOS ÉTNICOS",
+  "ÁREA DE CULTURA",
+  "UNIVERSIDAD SALUDABLE",
+  "POLÍTICA INSTITUCIONAL DE IGUALDAD Y EQUIDAD DE GÉNERO, IDENTIDADES Y ORIENTACIONES SEXUALES Y NO DISCRIMINACIÓN EN LA UV",
+  "DISCAPACIDAD E INCLUSIÓN",
+  "BIENESTAR",
+];
+
 const clasificaciones = ["Datos Clave", "Información General", "Secciones"]
 const tipos = ["Text", "TextArea", "Number", "Select"]
 
@@ -102,7 +111,6 @@ export default function GestionReport() {
     }
   })
   const [newVar, setNewVar] = useState({
-    id: "",
     variable: "",
     nombreVariable: "",
     proceso: null as string | null,
@@ -124,40 +132,59 @@ export default function GestionReport() {
       setNewVar((prev) => ({ ...prev, [field]: val }))
     }
 
-  const handleSubmit = () => {
-    // Detectamos qué campos están vacíos
-    const missingFields = Object.entries(newVar)
-      .filter(([_, value]) => value === "" || value === null || value === undefined)
-      .map(([key]) => {
-        switch (key) {
-          case "id": return "ID";
-          case "variable": return "Variable";
-          case "nombreVariable": return "Nombre de Variable";
-          case "proceso": return "Proceso";
-          case "valor": return "Valor";
-          case "clasificacion": return "Clasificación";
-          case "tipo": return "Tipo";
-          default: return key;
-        }
-      });
+  const handleSubmit = async () => {
+      const missingFields = Object.entries(newVar)
+        .filter(([_, value]) => value === "" || value == null)
+        .map(([key]) => {
+          switch (key) {
+            case "variable": return "Variable"
+            case "nombreVariable": return "Nombre de Variable"
+            case "proceso": return "Proceso"
+            case "valor": return "Valor"
+            case "clasificacion": return "Clasificación"
+            case "tipo": return "Tipo"
+            default: return key
+          }
+        })
 
-    if (missingFields.length > 0) {
-      setSnackbar({
-        open: true,
-        message: `Por favor completa los siguientes campos:\n• ${missingFields.join("\n• ")}`,
-        severity: "error",
-      });
-      return; // No cerramos el diálogo
+      if (missingFields.length) {
+        setSnackbar({
+          open: true,
+          message: `Por favor completa: \n• ${missingFields.join("\n• ")}`,
+          severity: "error"
+        })
+        return
+      }
+
+      const payload = {
+        spreadsheet_id: "1mon8QU6jeBEFbHJEpeewImi3qEVTTSi4uuL8Mdp6ns8",
+        row: {
+          VARIABLE: newVar.variable,
+          NOMBRE_VARIABLE: newVar.nombreVariable,
+          PROCESO: newVar.proceso!,
+          VALOR: newVar.valor,
+          Clasificacion: newVar.clasificacion!,
+          tipo: newVar.tipo!
+        }
     }
 
-    // Si todo OK
-    setSnackbar({
-      open: true,
-      message: "Variable agregada exitosamente",
-      severity: "success",
-    });
-    handleClose();
-  };
+    try {
+      setLoading(true)
+      const resp = await createNewVar(payload)
+
+      if (resp.status === 201 || resp.new_id) {
+        setSnackbar({ open: true, message: "Variable agregada exitosamente", severity: "success" })
+        handleClose()
+      } else {
+        setSnackbar({ open: true, message: "Error al agregar variable", severity: "error" })
+      }
+    } catch (err) {
+      console.error(err)
+      setSnackbar({ open: true, message: "Error de red al agregar variable", severity: "error" })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const {
     activeTab,
@@ -312,15 +339,6 @@ export default function GestionReport() {
       <Dialog open={openAddVar} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Agregar Variable</DialogTitle>
         <DialogContent sx={{ display: "grid", gap: 2, pt: 1 }}>
-          {/* ID */}
-          <TextField
-            label="ID"
-            value={newVar.id}
-            sx={fieldSX}
-            onChange={(e) => handleField("id")(null, e.target.value)}
-            fullWidth
-          />
-
           {/* VARIABLE */}
           <TextField
             label="VARIABLE"

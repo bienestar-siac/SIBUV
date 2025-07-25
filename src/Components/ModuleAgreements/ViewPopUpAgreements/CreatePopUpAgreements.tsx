@@ -99,7 +99,7 @@ export default function CreatePopUpAgreements({
 
             if (defaultValues) 
                 save = await updateAgreements(body);
-
+            console.log(save," S A V E")
             if (save?.message) {
                 setStatus({ open: true, type: 'success', message: 'Acuerdo creado exitosamente' });
                 setDisabled(false)

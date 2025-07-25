@@ -51,3 +51,17 @@ export const updatePrompt = (data) => {
         urlEndPoint: `/api/v1/sheets/update-insert-prompt`,
     })
 }
+
+export const createNewVar = (data) => {
+    return fetchPostGeneral({
+        dataSend: data,
+        urlEndPoint: `/api/v1/sheets/created-new-var-document`
+    })
+}
+
+export const createScannerNew = (data) => {
+    return fetchPostGeneral({
+        dataSend: data,
+        urlEndPoint: `/api/v1/sheets/create-scanner-new`
+    })
+}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useRef, useEffect} from "react"
 import {
   Box,
   Paper,
@@ -18,8 +18,20 @@ import {
   DialogActions,
   IconButton,
   Chip,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material"
 import { Add as AddIcon, QrCodeScanner as QrCodeScannerIcon, Close as CloseIcon } from "@mui/icons-material"
+import Quagga from "@ericblade/quagga2"
+
+console.log("Quagga:", Quagga);
+console.log("Quagga.init:", Quagga?.init);
+
+
+// Redux
+import { useSelector } from "react-redux";
 
 // Estilos basados en los colores de la imagen
 const styles = {
@@ -112,70 +124,100 @@ const styles = {
   },
 }
 
-// Datos de ejemplo
-const studentData = [
-  {
-    id: 1,
-    codigoEstudiante: "EST001",
-    idRegistro: "REG2025001",
-    fecha: "09/01/2025",
-    estado: "Activo",
-  },
-  {
-    id: 2,
-    codigoEstudiante: "EST002",
-    idRegistro: "REG2025002",
-    fecha: "09/01/2025",
-    estado: "Activo",
-  },
-  {
-    id: 3,
-    codigoEstudiante: "EST003",
-    idRegistro: "REG2025003",
-    fecha: "08/01/2025",
-    estado: "Pendiente",
-  },
-]
+// 
+import { createScannerNew } from '../../services/process/Process'
+
 
 export default function StudentTrackingComponent() {
   const [openScanner, setOpenScanner] = useState(false)
   const [scannedCode, setScannedCode] = useState("")
+  const [selectedPlace, setSelectedPlace] = useState("")
+  const [studentData, setStudentData] = useState([])
+
+  const qrFormList = useSelector((state) => state.moduleQr.data)
+  const videoRef = useRef(null)
+
+  const today = new Date().toLocaleDateString("es-CO", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 
   const handleOpenScanner = () => {
+    if (!selectedPlace) {
+      alert("Selecciona un lugar antes de abrir el escáner.")
+      return
+    }
     setOpenScanner(true)
   }
 
   const handleCloseScanner = () => {
+    Quagga.stop()
     setOpenScanner(false)
     setScannedCode("")
   }
 
-  const handleScanCode = () => {
-    // Simulación de escaneo de código de barras
-    const mockCode = `EST${Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, "0")}`
-    setScannedCode(mockCode)
-  }
+  useMemo(() => {
+    setStudentData(qrFormList)
+  }, [qrFormList])
+
+  useEffect(() => {
+    if (!openScanner || !videoRef.current) return
+
+    console.log("Quagga init:", Quagga, Quagga.init)
+
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: videoRef.current,
+        constraints: { facingMode: "environment" },
+      },
+      decoder: { readers: ["code_128_reader"] },
+    }, (err) => {
+      if (err) {
+        console.error("Quagga init error:", err)
+        return
+      }
+      Quagga.start()
+    })
+
+    Quagga.onDetected((data) => {
+      const code = data.codeResult.code
+      console.log("Escaneado:", code)
+      setScannedCode(code)
+      setStudentData(prev => [
+        ...prev,
+        { id: Date.now(), codigoEstudiante: code, fecha: new Date().toLocaleDateString("es-CO"), lugar: selectedPlace }
+      ])
+      Quagga.stop()
+    })
+
+    return () => {
+      Quagga.offDetected()
+      Quagga.stop()
+    }
+  }, [openScanner])
 
   return (
     <Box sx={styles.container}>
       {/* Header */}
       <Paper sx={styles.header}>
         <Typography sx={styles.title}>Seguimiento de Estudiantes</Typography>
-        <Typography sx={styles.subtitle}>miércoles, 9 de julio de 2025</Typography>
+        <Typography sx={styles.subtitle}>{today}</Typography>
       </Paper>
 
       {/* Botones de acción */}
       <Box sx={{ marginBottom: "24px", display: "flex", gap: "12px" }}>
-        <Button variant="contained" startIcon={<AddIcon />} sx={styles.primaryButton}>
+        <Button disabled variant="contained" startIcon={<AddIcon />} sx={styles.primaryButton}>
           NUEVO ESTUDIANTE
         </Button>
         <Button
           variant="contained"
           startIcon={<QrCodeScannerIcon />}
           sx={styles.secondaryButton}
-          onClick={handleOpenScanner}
+          onClick={() => setOpenScanner(true)}
         >
           ESCANEAR CÓDIGO
         </Button>
@@ -187,79 +229,43 @@ export default function StudentTrackingComponent() {
           <TableHead sx={styles.tableHeader}>
             <TableRow>
               <TableCell sx={styles.tableHeaderCell}>Código Estudiante</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>ID de Registro</TableCell>
               <TableCell sx={styles.tableHeaderCell}>Fecha</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Estado</TableCell>
-              <TableCell sx={styles.tableHeaderCell}>Acciones</TableCell>
+              <TableCell sx={styles.tableHeaderCell}>Lugar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {studentData.map((student) => (
               <TableRow key={student.id}>
-                <TableCell sx={styles.tableCell}>{student.codigoEstudiante}</TableCell>
-                <TableCell sx={styles.tableCell}>{student.idRegistro}</TableCell>
+                <TableCell sx={styles.tableCell}>{student.codigoestudiante}</TableCell>
                 <TableCell sx={styles.tableCell}>{student.fecha}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={student.estado}
-                    sx={{
-                      ...styles.statusChip,
-                      backgroundColor: student.estado === "Activo" ? "#38A169" : "#ED8936",
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button size="small" sx={styles.secondaryButton} onClick={handleOpenScanner}>
-                    Escanear
-                  </Button>
-                </TableCell>
+                <TableCell sx={styles.tableCell}>{student.lugar}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Dialog para escáner de código de barras */}
+      {/* Dialog para escáner */}
       <Dialog open={openScanner} onClose={handleCloseScanner} maxWidth="sm" fullWidth sx={styles.dialog}>
         <DialogTitle sx={styles.dialogTitle}>
           Escáner de Código de Barras
-          <IconButton
-            onClick={handleCloseScanner}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: "#718096",
-            }}
-          >
+          <IconButton onClick={handleCloseScanner} sx={{ position: 'absolute', top: 8, right: 8, color: '#718096' }}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
           <Box sx={styles.scannerArea}>
-            <QrCodeScannerIcon sx={styles.scannerIcon} />
-            <Typography variant="h6" sx={{ color: "#4A5568", marginBottom: "8px" }}>
-              Posiciona el código de barras frente a la cámara
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#718096" }}>
-              El escaneo se realizará automáticamente
-            </Typography>
-            {scannedCode && (
-              <Box sx={{ marginTop: "16px" }}>
-                <Typography variant="h6" sx={{ color: "#38A169" }}>
-                  Código escaneado: {scannedCode}
-                </Typography>
-              </Box>
-            )}
+            <div ref={videoRef} style={styles.video}></div>
+            <Box sx={styles.overlay} />
           </Box>
+          {scannedCode && (
+            <Typography variant="h6" sx={{ mt: 2, color: '#38A169' }}>
+              Código escaneado: {scannedCode}
+            </Typography>
+          )}
         </DialogContent>
-        <DialogActions sx={{ padding: "16px 24px" }}>
-          <Button onClick={handleScanCode} sx={styles.primaryButton} variant="contained">
-            Simular Escaneo
-          </Button>
-          <Button onClick={handleCloseScanner} sx={{ color: "#718096" }}>
-            Cancelar
-          </Button>
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button onClick={handleCloseScanner} sx={{ color: '#718096' }}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     </Box>
