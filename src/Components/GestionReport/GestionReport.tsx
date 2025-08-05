@@ -67,17 +67,16 @@ import FormDinamic from '../WorkPlan/Form/FormDinamic'
 import Handlers from './handlers'
 
 const procesos = [
-  "ADMINISTRATIVO",
   "SALUD OCUPACIONAL",
   "SALUD ESTUDIANTIL",
-  "DEPORTE Y RECREACIÓN",
+  "RECREACION",
   "RESTAURANTE",
-  "ÁREA ASUNTOS ÉTNICOS",
-  "ÁREA DE CULTURA",
+  "ASUNTOS ETNICOS",
+  "CULTURA",
   "UNIVERSIDAD SALUDABLE",
-  "POLÍTICA INSTITUCIONAL DE IGUALDAD Y EQUIDAD DE GÉNERO, IDENTIDADES Y ORIENTACIONES SEXUALES Y NO DISCRIMINACIÓN EN LA UV",
-  "DISCAPACIDAD E INCLUSIÓN",
-  "BIENESTAR",
+  "AREA VIOLENCIA",
+  "DISCAPACIDAD E INCLUSION",
+  "DHPS",
 ];
 
 const clasificaciones = ["Datos Clave", "Información General", "Secciones"]
@@ -171,8 +170,15 @@ export default function GestionReport() {
     try {
       setLoading(true)
       const resp = await createNewVar(payload)
-
       if (resp.status === 201 || resp.new_id) {
+        setNewVar({
+          variable: "",
+          nombreVariable: "",
+          proceso: null as string | null,
+          valor: "",
+          clasificacion: null as string | null,
+          tipo: null as string | null,
+        })
         setSnackbar({ open: true, message: "Variable agregada exitosamente", severity: "success" })
         handleClose()
       } else {
@@ -339,6 +345,22 @@ export default function GestionReport() {
       <Dialog open={openAddVar} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>Agregar Variable</DialogTitle>
         <DialogContent sx={{ display: "grid", gap: 2, pt: 1 }}>
+          {/* ALERTA INFORMATIVA */}
+          <Alert severity="info">
+            • Usa el formato de plantilla para la VARIABLE, por ejemplo <strong>{"${nombre_vicerrect@r}"}</strong>, donde “Nombre Del Vicerrect@r” es el Título.
+            <br />
+            • <strong>Proceso</strong>: representa el sub-proceso al que pertenece la variable.
+            <br />
+            • <strong>Valor</strong>: es el contenido o dato que contendrá la variable.
+            <br />
+            • <strong>Clasificación</strong> (área de la variable):
+            <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+              <li><strong>Datos Clave</strong>: variables de mayor importancia.</li>
+              <li><strong>Información General</strong>: datos recurrentes en varias partes del documento dentro de la misma sección.</li>
+              <li><strong>Secciones</strong>: variables específicas del sub-proceso.</li>
+            </ul>
+            • <strong>Tipo</strong>: tipo de dato de la variable; se recomienda siempre <em>Text</em>.
+          </Alert>
           {/* VARIABLE */}
           <TextField
             label="VARIABLE"
@@ -408,7 +430,7 @@ export default function GestionReport() {
         </DialogContent>
         <DialogActions sx={{ pr: 3, pb: 2 }}>
           <Button sx={{ border: '1px solid rgb(235, 62, 38)', color: 'rgb(235, 62, 38)' }} onClick={handleClose}>Cancelar</Button>
-          <Button sx={{ background: 'rgb(235, 62, 38)' }} variant="contained" onClick={handleSubmit}>
+          <Button disabled={loading} sx={{ background: 'rgb(235, 62, 38)' }} variant="contained" onClick={handleSubmit}>
             Agregar
           </Button>
         </DialogActions>

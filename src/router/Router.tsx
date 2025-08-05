@@ -14,6 +14,7 @@ const ModuleAgreementsTools = lazy(() => import("../pages/ToolsAgreements/index.
 const ModuleEmailAutomation = lazy(() => import("../pages/EmailAutomation/index.tsx"));
 const ModuleIA = lazy(() => import("../pages/IA/index.tsx"));
 const ModuleQR = lazy(() => import("../pages/CodeQr/index.tsx"));
+const DashboardScanner = lazy(() => import("../pages/DashboardScanner/index.tsx"));
 
 export default [
   { path: "/", element: <Home />, isAuth: false },
@@ -27,6 +28,7 @@ export default [
   { path: '/module/seguimiento-de-compromisos-y-acuerdos/herramientas', element: <ModuleAgreementsTools />, isAuth: true},
   { path: '/module/seguimiento-de-compromisos-y-acuerdos/herramientas/email-automation', element: <ModuleEmailAutomation />, isAuth: true},
   { path: '/module/codigo-de-barras', element: <ModuleQR />, isAuth: true},
+  { path: '/module/codigo-de-barras/dashboard', element: <DashboardScanner />, isAuth: true},
   { path: '/module/ia', element: <ModuleIA />, isAuth: true},
   { path: "*", element: <NoFound />, isAuth: false },
 ];

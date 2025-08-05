@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 // Components
 import routes from "./router/Router";
 import Loader from "./Components/Loarder/Loarder.tsx";
+import FloatingChatAssistant from './Components/FloatingChatAssistant/FloatingChatAssistant'
 
 // Styles
 import "./css/root.css"
@@ -50,6 +51,7 @@ export default function Router() {
                 })}
             </Routes>
             </Suspense>
+            {session?.isAuth && <FloatingChatAssistant />}
         </Fragment>
     );
 }
