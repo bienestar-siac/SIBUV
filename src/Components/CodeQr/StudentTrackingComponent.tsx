@@ -265,7 +265,7 @@ export default function StudentTrackingComponent() {
   }, [qrFormList])
 
   useEffect(() => {
-    // if (!openScanner) return;
+    if (!openScanner) return;
 
     const initScanner = async () => {
       try {
