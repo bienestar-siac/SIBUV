@@ -2,7 +2,7 @@ import type React from "react"
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { Button, Box, TextField, IconButton, Paper, Typography, Container } from "@mui/material"
 import MicIcon from "@mui/icons-material/Mic"
 import SendIcon from "@mui/icons-material/Send"
@@ -22,6 +22,11 @@ import {
     generatePrompIA
 } from '../../services/process/Process'
 
+// Fetch
+import { getViewDataProcess } from '../../services/process/decryptdata'
+
+const SPREADSHEETID = "1J3XdOOjb2H6viSDyTQD6RPz1H2oLkgBBbn03MfndheA"
+
 interface Message {
   text: string
   isUser: boolean
@@ -34,6 +39,7 @@ export default function ChatInterfaceIA(): React.FC {
     const [isLoading, setIsLoading] = useState(false)
     const [isRecording, setIsRecording] = useState(false)
     const [comprimos, setComprimos] = useState("General")
+    const [acuerdos, setAcuerdos] = useState([])
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const mediaRecorderRef = useRef<MediaRecorder>()
@@ -89,7 +95,27 @@ export default function ChatInterfaceIA(): React.FC {
     const handleSend = async () => {
         if (!inputText.trim()) return
 
-        // 1) Añadir mensaje del usuario al estado
+        let basePrompt = PrompDefault?.promp
+
+        if (comprimos === "1" && acuerdos.length > 0) {
+        const ultimos = acuerdos.slice(-20);
+        const acuerdosText = ultimos.map((a, index) => {
+            const campos = Object.entries(a)
+            .map(([key, value]) => `  ${key}: ${value?.toString().trim() || "—"}`)
+            .join("\n");
+            return `Acuerdo ${index + 1}:\n${campos}`;
+        }).join("\n\n");
+
+        console.log(ultimos, "ULTIMOS");
+        basePrompt += `
+
+        Total de compromisos: ${acuerdos.length}
+
+        Información detallada de los últimos ${ultimos.length} acuerdos:
+
+        ${acuerdosText}`;
+        }
+
         const userMessage: Message = {
             text: inputText,
             isUser: true,
@@ -102,7 +128,7 @@ export default function ChatInterfaceIA(): React.FC {
         try {
 
             const iaMessages = [
-            { role: "system", content: PrompDefault?.promp },
+            { role: "system", content: basePrompt},
             ...messages.map(m => ({
                 role: m.isUser ? "user" : "assistant",
                 content: m.text
@@ -153,12 +179,31 @@ export default function ChatInterfaceIA(): React.FC {
         }
     }
 
+    const getDataAcuerdos = async () => {
+        try {
+            const response = await getViewDataProcess({ 
+                sheet_name: 'CONSOLIDADO',
+                spreadsheet_id: SPREADSHEETID
+            })
+            console.log(response)
+            setAcuerdos(response || [])
+        } catch (error) {
+            console.error('Error fetching acuerdos:', error)
+        }
+    }
+
+    useEffect(() => {
+        if (comprimos === "1") {
+            getDataAcuerdos()
+        }
+    }, [comprimos])
+
     return (
         <Container sx={styles.container}>
         <Box sx={{ display: 'flex', width: '100%', justifyContent: 'flex-start', marginTop: '20px'}}>
             <FormControl fullWidth size="small">
                 {/* La “etiqueta” del campo */}
-                <InputLabel id="comprimos-label">Comprimos</InputLabel>
+                <InputLabel id="comprimos-label">Conjunto De Datos</InputLabel>
                 <Select
                     labelId="comprimos-label"
                     sx={{ width: '300px'}}
