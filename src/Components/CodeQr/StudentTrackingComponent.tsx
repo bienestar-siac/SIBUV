@@ -265,50 +265,68 @@ export default function StudentTrackingComponent() {
   }, [qrFormList])
 
   useEffect(() => {
-    if (!openScanner) return
-    console.log("AAAAA")
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    .then(stream => {
-      console.log("✅ Stream OK", stream);
-    })
-    .catch(err => console.error("❌ getUserMedia failed:", err));
+    // if (!openScanner) return;
 
-    Quagga.init({
-      inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: videoRef.current,
-        constraints: {
-          width: { min: 640 },
-          height: { min: 480 },
-          facingMode: "environment"
-       },
-      },
-      decoder: { readers: ["code_128_reader"] },
-    }, (err) => {
-      if (err) {
-        console.error("Quagga init error:", err)
-        return
+    const initScanner = async () => {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+
+        setTimeout(() => {
+          if (videoRef.current) {
+            Quagga.init({
+              inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: videoRef.current,
+                constraints: {
+                  width: { min: 640 },
+                  height: { min: 480 },
+                  facingMode: "environment",
+                },
+              },
+              decoder: { readers: ["code_128_reader"] },
+            }, (err) => {
+              if (err) {
+                console.error("Error al iniciar Quagga:", err);
+                return;
+              }
+              Quagga.start();
+            });
+
+            Quagga.onDetected(handleDetected);
+          }
+        }, 500);
+
+      } catch (err) {
+        console.error("Error al acceder a la cámara:", err);
       }
-      Quagga.start()
-    })
+    };
 
-    Quagga.onDetected((data) => {
-      const code = data.codeResult.code
-      console.log("Escaneado:", code)
-      setScannedCode(code)
+    const handleDetected = (data) => {
+      const code = data.codeResult.code;
+      console.log("Código detectado:", code);
+      setScannedCode(code);
       setStudentData(prev => [
         ...prev,
-        { id: Date.now(), codigoEstudiante: code, fecha: new Date().toLocaleDateString("es-CO"), lugar: selectedPlace }
-      ])
-      Quagga.stop()
-    })
+        {
+          id: Date.now(),
+          codigoEstudiante: code,
+          fecha: new Date().toLocaleDateString("es-CO"),
+          lugar: selectedPlace,
+          programa: selectedProgram,
+          sede: selectedCampus,
+        },
+      ]);
+      Quagga.stop();
+    };
+
+    initScanner();
 
     return () => {
-      Quagga.offDetected()
-      Quagga.stop()
-    }
-  }, [openScanner])
+      Quagga.offDetected(handleDetected);
+      Quagga.stop();
+    };
+  }, [openScanner]);
 
   return (
     <Box sx={styles.container}>
