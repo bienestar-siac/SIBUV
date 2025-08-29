@@ -95,25 +95,25 @@ export default function ChatInterfaceIA(): React.FC {
     const handleSend = async () => {
         if (!inputText.trim()) return
 
-        let basePrompt = PrompDefault?.promp
+        let basePrompt = PrompDefault?.prompt
 
         if (comprimos === "1" && acuerdos.length > 0) {
-        const ultimos = acuerdos.slice(-20);
-        const acuerdosText = ultimos.map((a, index) => {
-            const campos = Object.entries(a)
-            .map(([key, value]) => `  ${key}: ${value?.toString().trim() || "—"}`)
-            .join("\n");
-            return `Acuerdo ${index + 1}:\n${campos}`;
-        }).join("\n\n");
+            const ultimos = acuerdos.slice(-20);
+            const acuerdosText = ultimos.map((a, index) => {
+                const campos = Object.entries(a)
+                .map(([key, value]) => `  ${key}: ${value?.toString().trim() || "—"}`)
+                .join("\n");
+                return `Acuerdo ${index + 1}:\n${campos}`;
+            }).join("\n\n");
 
-        console.log(ultimos, "ULTIMOS");
-        basePrompt += `
+            console.log(ultimos, "ULTIMOS");
+            basePrompt += `
 
-        Total de compromisos: ${acuerdos.length}
+            Total de compromisos: ${acuerdos.length}
 
-        Información detallada de los últimos ${ultimos.length} acuerdos:
+            Información detallada de los últimos ${ultimos.length} acuerdos:
 
-        ${acuerdosText}`;
+            ${acuerdosText}`;
         }
 
         const userMessage: Message = {
@@ -126,7 +126,7 @@ export default function ChatInterfaceIA(): React.FC {
         setIsLoading(true)
 
         try {
-
+        console.log(basePrompt,"HOLA", PrompDefault)
             const iaMessages = [
             { role: "system", content: basePrompt},
             ...messages.map(m => ({
@@ -135,7 +135,7 @@ export default function ChatInterfaceIA(): React.FC {
             })),
             { role: "user", content: inputText }
             ]
-
+            console.log(iaMessages)
             const response = await generatePrompIA({
                 model: "deepseek-chat",
                 messages: iaMessages,

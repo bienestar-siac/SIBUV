@@ -4,6 +4,7 @@ import { viewProcessSlice } from './viewProcess'
 import { moduleQuality } from './moduleQuality'
 import { moduleAgreements } from './agreements'
 import { processQrSlice } from './qr'
+import { committeePeaceSlice } from './committeePeace'
 
 // Definimos un slice para manejar la sesión
 const sessionSlice = createSlice({
@@ -34,6 +35,7 @@ const store = configureStore({
     moduleQuality: moduleQuality.reducer,
     moduleAgreements: moduleAgreements.reducer,
     moduleQr: processQrSlice.reducer,
+    committeePeace: committeePeaceSlice.reducer,
   },
 });
 

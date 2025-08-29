@@ -41,4 +41,11 @@ export default [
       color: "#F44336",
       path: '/module/codigo-de-barras',
     },
+    {
+      title: "Comité de convivencia paz y seguridad",
+      subtitle: "Procesos Internos de Bienestar Universitario",
+      icon: "/icons/7.png",
+      color: "#F44336",
+      path: '/module/convivencia-paz-seguridad',
+    },
 ]
