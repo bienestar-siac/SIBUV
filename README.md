@@ -1,7 +1,19 @@
-# Administrador de Procesos VBU  
-Este proyecto sigue un enfoque basado en arquitectura hexagonal, combinando principios de separación de responsabilidades para mejorar la escalabilidad y mantenibilidad.
+# 🧩 Administrador de Procesos VBU  
 
-# 📁 Estructura del Proyecto  
+Este proyecto sigue un enfoque basado en **arquitectura hexagonal**, combinando principios de **separación de responsabilidades** para mejorar la **escalabilidad**, **mantenibilidad** y **modularidad** del código.
+
+---
+
+## ⚙️ Tecnologías Principales
+
+- ⚛️ **React**
+- 🟦 **TypeScript**
+- ⚡ **Vite** (para desarrollo rápido)
+- 🧱 **Arquitectura Hexagonal**
+
+---
+
+## 📁 Estructura del Proyecto
 
 ```bash
 src/
@@ -30,6 +42,53 @@ src/
 │── README.md         # Documentación del proyecto
 ```
 
-# Tecnologías
-- React
-- Typescript
+## 🧩 Requisitos Previos
+
+Asegúrate de tener instaladas las siguientes versiones o superiores:
+
+Node.js v20.5.0
+npm v9.8.0
+
+
+Verifica las versiones ejecutando:
+
+node -v
+npm -v
+
+## 🚀 Instalación y Configuración
+
+Clona el repositorio:
+
+git clone https://github.com/tu-usuario/administrador-procesos-vbu.git
+cd administrador-procesos-vbu
+
+
+Instala las dependencias:
+
+npm install
+
+Crea el archivo .env en la raíz del proyecto.
+
+```
+VITE_CLIEN_ID_GOOGLE=
+VITE_ENCRYPTION_KEY=
+VITE_SPREEDSHEETID_AGREEMENTS=
+VITE_DEEPSEEK_API_KEY=
+VITE_APP_EMAILJS_SERVICE_ID=
+VITE_APP_EMAILJS_TEMPLATE_ID=
+VITE_APP_EMAILJS_USER_ID=
+```
+
+Comandos principales:
+
+npm run dev → Inicia el servidor de desarrollo.
+
+npm run build → Genera la versión optimizada para producción.
+
+npm test → Placeholder para pruebas futuras.
+
+## 🌐 Ejecución del Proyecto
+
+Para iniciar el servidor de desarrollo:
+
+npm run dev
